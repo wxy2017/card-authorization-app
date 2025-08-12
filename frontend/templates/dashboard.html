@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.title}}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>控制台</h1>
+            <p>欢迎回来，<span id="userNickname">用户</span></p>
+        </div>
+        
+        <div class="card">
+            <h2>快速操作</h2>
+            <div style="display: grid; gap: 0.5rem;">
+                <a href="/cards/create" class="btn btn-primary">创建新卡片</a>
+                <a href="/cards" class="btn btn-secondary">查看我的卡片</a>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>统计信息</h2>
+            <div style="display: flex; justify-content: space-between; text-align: center;">
+                <div>
+                    <h3 id="createdCards">0</h3>
+                    <p>已创建</p>
+                </div>
+                <div>
+                    <h3 id="receivedCards">0</h3>
+                    <p>已收到</p>
+                </div>
+                <div>
+                    <h3 id="usedCards">0</h3>
+                    <p>已使用</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>最近活动</h2>
+            <div id="recentActivity">
+                <p class="text-muted">暂无活动记录</p>
+            </div>
+        </div>
+    </div>
+
+    <nav class="navbar">
+        <a href="/dashboard" class="nav-item active">
+            <span>🏠</span>
+            <span>首页</span>
+        </a>
+        <a href="/cards" class="nav-item">
+            <span>🎴</span>
+            <span>卡片</span>
+        </a>
+        <a href="/cards/create" class="nav-item">
+            <span>➕</span>
+            <span>创建</span>
+        </a>
+        <a href="#" class="nav-item" onclick="logout()">
+            <span>🚪</span>
+            <span>退出</span>
+        </a>
+    </nav>
+
+    <script src="/static/js/dashboard.js"></script>
+</body>
+</html>

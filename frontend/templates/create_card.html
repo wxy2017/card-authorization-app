@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.title}}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>创建卡片</h1>
+            <p>设计您的专属功能卡片</p>
+        </div>
+        
+        <div class="card">
+            <form id="createCardForm">
+                <div class="form-group">
+                    <label class="form-label">卡片名称</label>
+                    <input type="text" class="form-control" id="title" placeholder="例如：及时和好卡" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">卡片描述</label>
+                    <textarea class="form-control" id="description" rows="4" 
+                        placeholder="例如：及时化解本次任何缘由的争吵" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">有效期（可选）</label>
+                    <input type="date" class="form-control" id="expiresAt">
+                </div>
+                
+                <button type="submit" class="btn btn-primary">/button>
+                <a href="/dashboard" class="btn btn-outline">返回</a>
+            </form>
+        </div>
+    </div>
+
+    <nav class="navbar">
+        <a href="/dashboard" class="nav-item">
+            <span>🏠</span>
+            <span>首页</span>
+        </a>
+        <a href="/cards" class="nav-item">
+            <span>🎴</span>
+            <span>卡片</span>
+        </a>
+        <a href="/cards/create" class="nav-item active">
+            <span>➕</span>
+            <span>创建</span>
+        </a>
+        <a href="#" class="nav-item" onclick="logout()">
+            <span>🚪</span>
+            <span>退出</span>
+        </a>
+    </nav>
+
+    <script src="/static/js/create_card.js"></script>
+</body>
+</html>

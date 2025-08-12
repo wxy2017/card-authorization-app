@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.title}}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>我的卡片</h1>
+            <p>管理您的所有卡片</p>
+        </div>
+        
+        <div class="card">
+            <h2>卡片分类</h2>
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                <button class="btn btn-primary" onclick="showTab('my')">我创建的</button>
+                <button class="btn btn-secondary" onclick="showTab('received')">收到的</button>
+            </div>
+        </div>
+        
+        <div id="myCards" class="cards-container">
+            <div class="loading">
+                <div class="spinner"></div>
+            </div>
+        </div>
+        
+        <div id="receivedCards" class="cards-container" style="display: none;">
+            <div class="loading">
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 发送卡片模态框 -->
+    <div id="sendModal" class="modal">
+        <div class="modal-content">
+            <h2>发送卡片</h2>
+            <form id="sendForm">
+                <div class="form-group">
+                    <label class="form-label">接收人用户名</label>
+                    <input type="text" class="form-control" id="toUsername" required>
+                </div>
+                <button type="submit" class="btn btn-primary">发送</button>
+                <button type="button" class="btn btn-outline" onclick="closeSendModal()">取消</button>
+            </form>
+        </div>
+    </div>
+
+    <nav class="navbar">
+        <a href="/dashboard" class="nav-item">
+            <span>🏠</span>
+            <span>首页</span>
+        </a>
+        <a href="/cards" class="nav-item active">
+            <span>🎴</span>
+            <span>卡片</span>
+        </a>
+        <a href="/cards/create" class="nav-item">
+            <span>➕</span>
+            <span>创建</span>
+        </a>
+        <a href="#" class="nav-item" onclick="logout()">
+            <span>🚪</span>
+            <span>退出</span>
+        </a>
+    </nav>
+
+    <script src="/static/js/cards.js"></script>
+</body>
+</html>
