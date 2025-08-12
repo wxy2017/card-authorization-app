@@ -56,8 +56,8 @@ func main() {
 	r.GET("/cards/create", handlers.CreateCardPage)
 
 	// 启动服务器
-	log.Println("服务器启动在 http://localhost:8080")
-	if err := r.Run(":8080"); err != nil {
+	log.Println("服务器启动在 http://localhost:18080")
+	if err := r.Run(":18080"); err != nil {
 		log.Fatal("服务器启动失败:", err)
 	}
 }

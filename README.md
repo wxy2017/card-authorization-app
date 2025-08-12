@@ -121,8 +121,10 @@ go run main.go
 
 ```bash
 # 编译
-go build -o card-authorization main.go
 
+```
+CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o card-authorization main.go
+```
 # 运行
 ./card-authorization
 ```

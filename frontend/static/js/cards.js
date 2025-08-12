@@ -6,7 +6,7 @@ let currentCardId = null;
 function showTab(tab) {
     document.getElementById('myCards').style.display = tab === 'my' ? 'block' : 'none';
     document.getElementById('receivedCards').style.display = tab === 'received' ? 'block' : 'none';
-    
+
     // 更新按钮样式
     document.querySelectorAll('.card button').forEach(btn => {
         btn.classList.remove('btn-primary');
@@ -14,7 +14,7 @@ function showTab(tab) {
     });
     event.target.classList.remove('btn-secondary');
     event.target.classList.add('btn-primary');
-    
+
     // 加载对应数据
     if (tab === 'my') {
         loadMyCards();
@@ -29,7 +29,7 @@ async function loadMyCards() {
         const response = await fetch('/api/cards', {
             headers: getAuthHeaders()
         });
-        
+
         if (response.ok) {
             const data = await response.json();
             displayCards(data.cards, 'myCards');
@@ -47,7 +47,7 @@ async function loadReceivedCards() {
         const response = await fetch('/api/cards/received', {
             headers: getAuthHeaders()
         });
-        
+
         if (response.ok) {
             const data = await response.json();
             displayCards(data.cards, 'receivedCards');
@@ -62,12 +62,12 @@ async function loadReceivedCards() {
 // 显示卡片
 function displayCards(cards, containerId) {
     const container = document.getElementById(containerId);
-    
+
     if (cards.length === 0) {
         container.innerHTML = '<div class="card"><p class="text-muted">暂无卡片</p></div>';
         return;
     }
-    
+
     container.innerHTML = cards.map(card => `
         <div class="card">
             <div class="card-header">
@@ -99,8 +99,9 @@ function getCardActions(card) {
     if (card.status !== 'active') {
         return '';
     }
-    
-    if (window.location.pathname.includes('myCards')) {
+    var loginUser = JSON.parse(localStorage.getItem('user') || '{}');
+    var loginUseName = loginUser.username
+    if (card.creator.username === loginUseName) {
         return `
             <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
                 <button class="btn btn-primary" onclick="sendCard(${card.id})">发送</button>
@@ -132,15 +133,15 @@ async function useCard(cardId) {
     if (!confirm('确定要使用这张卡片吗？使用后卡片将自动注销。')) {
         return;
     }
-    
+
     try {
         const response = await fetch(`/api/cards/${cardId}/use`, {
             method: 'POST',
             headers: getAuthHeaders()
         });
-        
+
         const data = await response.json();
-        
+
         if (response.ok) {
             alert('卡片使用成功！');
             loadReceivedCards();
@@ -155,18 +156,18 @@ async function useCard(cardId) {
 // 发送卡片表单提交
 document.getElementById('sendForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    
+
     const toUsername = document.getElementById('toUsername').value;
-    
+
     try {
         const response = await fetch(`/api/cards/${currentCardId}/send`, {
             method: 'POST',
             headers: getAuthHeaders(),
-            body: JSON.stringify({ to_username: toUsername })
+            body: JSON.stringify({to_username: toUsername})
         });
-        
+
         const data = await response.json();
-        
+
         if (response.ok) {
             alert('卡片发送成功！');
             closeSendModal();
@@ -188,7 +189,7 @@ function formatDate(dateString) {
 // 页面加载
 document.addEventListener('DOMContentLoaded', () => {
     loadMyCards();
-    
+
     // 点击模态框外部关闭
     document.getElementById('sendModal').addEventListener('click', (e) => {
         if (e.target.id === 'sendModal') {
