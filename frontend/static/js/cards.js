@@ -173,7 +173,6 @@ async function useCard(cardId) {
     if (!confirm('确定要使用这张卡片吗？使用后卡片将自动注销。')) {
         return;
     }
-
     try {
         const response = await fetch(`/api/cards/${cardId}/use`, {
             method: 'POST',
@@ -252,8 +251,8 @@ async function loadUserList() {
 
 // 页面加载
 document.addEventListener('DOMContentLoaded', () => {
-    //默认加载我创建的卡
-    loadMyCards();
+    //默认加载我收到的卡
+    loadReceivedCards();
     //加载用户列表
     loadUserList();
     // 点击模态框外部关闭
