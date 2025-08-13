@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"card-authorization/database"
+	"card-authorization/log"
 	"card-authorization/middleware"
 	"card-authorization/models"
 	"net/http"
@@ -118,4 +119,14 @@ func GetProfile(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, user)
+}
+
+func ListUsers(c *gin.Context) {
+	var users []models.User
+	if err := database.DB.Table("users").Order("created_at desc").Find(&users).Error; err != nil {
+		log.Error("获取用户失败", err)
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "获取用户失败"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"users": users})
 }

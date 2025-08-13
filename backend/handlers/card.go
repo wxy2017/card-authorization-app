@@ -54,7 +54,7 @@ func GetMyCards(c *gin.Context) {
 	userID := c.GetUint("userID")
 
 	var cards []models.Card
-	if err := database.DB.Preload("Creator").
+	if err := database.DB.Preload("Creator").Preload("Owner").
 		Where("creator_id = ?", userID).
 		Order("created_at DESC").
 		Find(&cards).Error; err != nil {
@@ -69,7 +69,7 @@ func GetReceivedCards(c *gin.Context) {
 	userID := c.GetUint("userID")
 
 	var cards []models.Card
-	if err := database.DB.Preload("Creator").
+	if err := database.DB.Preload("Creator").Preload("Owner").
 		Where("owner_id = ? AND creator_id != ?", userID, userID).
 		Order("created_at DESC").
 		Find(&cards).Error; err != nil {
@@ -145,7 +145,7 @@ func SendCard(c *gin.Context) {
 
 	// 检查卡片所有者
 	if card.OwnerID != userID {
-		c.JSON(http.StatusForbidden, gin.H{"error": "无权发送该卡片"})
+		c.JSON(http.StatusForbidden, gin.H{"error": "所属者非本人，无权发送该卡片"})
 		return
 	}
 
@@ -205,4 +205,25 @@ func SearchUsers(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"users": users})
+}
+
+func DeleteCard(c *gin.Context) {
+	userID := c.GetUint("userID")
+	cardID := c.Param("id")
+	var card models.Card
+	if err := database.DB.First(&card, cardID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "卡片不存在"})
+		return
+	}
+	// 检查卡片所有者
+	if card.OwnerID != userID {
+		c.JSON(http.StatusForbidden, gin.H{"error": "无权删除该卡片"})
+		return
+	}
+	// 检查卡片创造者
+	if card.CreatorID != userID {
+		c.JSON(http.StatusForbidden, gin.H{"error": "无权删除该卡片"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "卡片删除成功"})
 }

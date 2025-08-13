@@ -36,6 +36,7 @@ func main() {
 		// 用户相关
 		api.POST("/register", handlers.Register)
 		api.POST("/login", handlers.Login)
+		api.GET("/listUsers", handlers.ListUsers)
 
 		// 需要认证的路由
 		auth := api.Group("/")
@@ -47,6 +48,7 @@ func main() {
 			auth.GET("/cards/received", handlers.GetReceivedCards)
 			auth.POST("/cards/:id/use", handlers.UseCard)
 			auth.POST("/cards/:id/send", handlers.SendCard)
+			auth.POST("/cards/:id/delete", handlers.DeleteCard)
 
 			// 用户相关
 			auth.GET("/profile", handlers.GetProfile)

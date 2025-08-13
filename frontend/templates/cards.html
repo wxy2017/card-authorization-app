@@ -40,8 +40,10 @@
             <h2>发送卡片</h2>
             <form id="sendForm">
                 <div class="form-group">
-                    <label class="form-label">接收人用户名</label>
-                    <input type="text" class="form-control" id="toUsername" required>
+                    <label class="form-label">接收人</label>
+                    <select class="form-control" id="toUsername" name="toUsername" required>
+                        <option value="" disabled selected>请选择用户</option>
+                    </select>
                 </div>
                 <button type="submit" class="btn btn-primary">发送</button>
                 <button type="button" class="btn btn-outline" onclick="closeSendModal()">取消</button>

@@ -77,6 +77,7 @@ function displayCards(cards, containerId) {
             <p class="card-description">${card.description}</p>
             <div class="card-meta">
                 <span>创建者：${card.creator.nickname || card.creator.username}</span>
+                <span>所属者：${card.owner.nickname || card.owner.username}</span>
                 <span>${formatDate(card.created_at)}</span>
             </div>
             ${getCardActions(card)}
@@ -196,4 +197,21 @@ document.addEventListener('DOMContentLoaded', () => {
             closeSendModal();
         }
     });
+
+    // 加载用户列表到下拉框
+    fetch('/api/listUsers')
+        .then(response => response.json())
+        .then(data => {
+            const select = document.getElementById('toUsername');
+            select.innerHTML = '<option value="" disabled selected>请选择用户</option>';
+            data.users.forEach(user => {
+                const option = document.createElement('option');
+                option.value = user.username;
+                option.textContent = user.nickname;
+                select.appendChild(option);
+            });
+        })
+        .catch(error => console.error('Error fetching users:', error));
 });
+
+
