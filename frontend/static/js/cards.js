@@ -187,21 +187,14 @@ function formatDate(dateString) {
     return date.toLocaleDateString('zh-CN');
 }
 
-// 页面加载
-document.addEventListener('DOMContentLoaded', () => {
-    loadMyCards();
-
-    // 点击模态框外部关闭
-    document.getElementById('sendModal').addEventListener('click', (e) => {
-        if (e.target.id === 'sendModal') {
-            closeSendModal();
-        }
-    });
-
-    // 加载用户列表到下拉框
-    fetch('/api/listUsers')
-        .then(response => response.json())
-        .then(data => {
+// 下拉选项（用户）
+async function loadUserList() {
+    try {
+        const response = await fetch('/api/users/listUsers', {
+            headers: getAuthHeaders()
+        });
+        if (response.ok) {
+            const data = await response.json();
             const select = document.getElementById('toUsername');
             select.innerHTML = '<option value="" disabled selected>请选择用户</option>';
             data.users.forEach(user => {
@@ -210,8 +203,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 option.textContent = user.nickname;
                 select.appendChild(option);
             });
-        })
-        .catch(error => console.error('Error fetching users:', error));
+        } else if (response.status === 401) {
+            logout();
+        }
+    } catch (error) {
+        console.error('加载用户列表失败:', error);
+    }
+}
+
+// 页面加载
+document.addEventListener('DOMContentLoaded', () => {
+    loadMyCards();
+    loadUserList();
+
+    // 点击模态框外部关闭
+    document.getElementById('sendModal').addEventListener('click', (e) => {
+        if (e.target.id === 'sendModal') {
+            closeSendModal();
+        }
+    });
 });
 
 

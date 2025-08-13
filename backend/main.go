@@ -20,7 +20,7 @@ func main() {
 
 	// 创建Gin路由
 	gin.SetMode(gin.ReleaseMode)
-	r := gin.Default()
+	r := gin.New()
 	// 移除默认日志中间件
 	r.Use(gin.Recovery())
 	// 注册自定义日志中间件
@@ -33,10 +33,9 @@ func main() {
 	// API路由组
 	api := r.Group("/api")
 	{
-		// 用户相关
+		// 用户相关(无需鉴权)
 		api.POST("/register", handlers.Register)
 		api.POST("/login", handlers.Login)
-		api.GET("/listUsers", handlers.ListUsers)
 
 		// 需要认证的路由
 		auth := api.Group("/")
@@ -49,10 +48,10 @@ func main() {
 			auth.POST("/cards/:id/use", handlers.UseCard)
 			auth.POST("/cards/:id/send", handlers.SendCard)
 			auth.POST("/cards/:id/delete", handlers.DeleteCard)
-
 			// 用户相关
 			auth.GET("/profile", handlers.GetProfile)
 			auth.GET("/users/search", handlers.SearchUsers)
+			auth.GET("/users/listUsers", handlers.ListUsers)
 		}
 	}
 
@@ -86,7 +85,6 @@ func customGinLogger(pid string) gin.HandlerFunc {
 		clientIP := c.ClientIP()
 		method := c.Request.Method
 		path := c.Request.URL.Path
-
 		// 格式化日志内容
 		logMsg := fmt.Sprintf("[%s]: [GIN] %s - %s | %d | %12s | %15s | %-6s \"%s\"",
 			pid,

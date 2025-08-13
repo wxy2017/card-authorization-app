@@ -125,7 +125,7 @@ go run main.go
 ```shell
 CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o card-authorization main.go
 ```
-# 运行
+# 运行（占用端口18080）
 ./card-authorization
 ```
 
