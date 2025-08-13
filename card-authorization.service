@@ -1,0 +1,15 @@
+[Unit]
+Description=Card Authorization Service
+After=network.target
+
+[Service]
+ExecStart=/opt/card/backend/card-authorization
+WorkingDirectory=/opt/card/backend
+Restart=always
+RestartSec=5
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=card-authorization
+
+[Install]
+WantedBy=multi-user.target

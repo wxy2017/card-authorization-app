@@ -3,10 +3,13 @@ package main
 import (
 	"card-authorization/database"
 	"card-authorization/handlers"
+	"card-authorization/log"
 	"card-authorization/middleware"
-	"log"
-
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"os"
+	"strconv"
+	"time"
 )
 
 func main() {
@@ -18,6 +21,10 @@ func main() {
 	// 创建Gin路由
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
+	// 移除默认日志中间件
+	r.Use(gin.Recovery())
+	// 注册自定义日志中间件
+	r.Use(customGinLogger(strconv.Itoa(os.Getpid())))
 
 	// 静态文件服务
 	r.Static("/static", "../frontend/static")
@@ -56,8 +63,40 @@ func main() {
 	r.GET("/cards/create", handlers.CreateCardPage)
 
 	// 启动服务器
-	log.Println("服务器启动在 http://localhost:18080")
+	log.Info("服务器启动在 http://localhost:18080")
 	if err := r.Run(":18080"); err != nil {
 		log.Fatal("服务器启动失败:", err)
+	}
+
+}
+
+// customGinLogger 创建自定义日志中间件
+func customGinLogger(pid string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// 记录开始时间
+		startTime := time.Now()
+		// 处理请求
+		c.Next()
+		// 计算耗时
+		latency := time.Since(startTime)
+		// 获取请求信息
+		statusCode := c.Writer.Status()
+		clientIP := c.ClientIP()
+		method := c.Request.Method
+		path := c.Request.URL.Path
+
+		// 格式化日志内容
+		logMsg := fmt.Sprintf("[%s]: [GIN] %s - %s | %d | %12s | %15s | %-6s \"%s\"",
+			pid,
+			startTime.Format("2006/01/02"),
+			startTime.Format("15:04:05"),
+			statusCode,
+			latency,
+			clientIP,
+			method,
+			path,
+		)
+		// 使用自定义的log.Info输出
+		log.Info(logMsg)
 	}
 }

@@ -2,8 +2,7 @@ package database
 
 import (
 	"card-authorization/models"
-
-	"gorm.io/driver/sqlite"
+	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 )
 
