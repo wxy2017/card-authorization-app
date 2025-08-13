@@ -1,0 +1,6 @@
+http_port: 18080
+email:
+  smtp_host: smtp.qq.com
+  smtp_port: 465
+  auth_email: 1304782185@qq.com
+  auth_password: XXXX

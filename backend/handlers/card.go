@@ -4,6 +4,7 @@ import (
 	"card-authorization/database"
 	"card-authorization/log"
 	"card-authorization/models"
+	"card-authorization/utils"
 	"net/http"
 	"time"
 
@@ -139,7 +140,7 @@ func SendCard(c *gin.Context) {
 	}
 
 	var card models.Card
-	if err := database.DB.First(&card, cardID).Error; err != nil {
+	if err := database.DB.Preload("Owner").First(&card, cardID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "卡片不存在"})
 		return
 	}
@@ -180,6 +181,20 @@ func SendCard(c *gin.Context) {
 	if err := database.DB.Create(transaction).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "记录交易失败"})
 		return
+	}
+	// 如果接收者有邮箱则发送邮件
+	if toUser.Email != "" {
+		// Email 不为空的逻辑
+		var body = "恭喜你，收到来自" + card.Owner.Nickname + "的卡：" + card.Title
+		if err := utils.SendEmail(toUser.Email, "收到卡："+card.Title, body); err != nil {
+			log.Error("向%s发送邮件失败", toUser.Nickname)
+		} else {
+			c.JSON(http.StatusOK, gin.H{
+				"message": "卡片发送成功，已邮件通知",
+				"card":    card,
+			})
+			return
+		}
 	}
 
 	c.JSON(http.StatusOK, gin.H{

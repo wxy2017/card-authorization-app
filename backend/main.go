@@ -1,6 +1,7 @@
 package main
 
 import (
+	"card-authorization/config"
 	"card-authorization/database"
 	"card-authorization/handlers"
 	"card-authorization/log"
@@ -16,6 +17,10 @@ func main() {
 	// 初始化数据库
 	if err := database.InitDB(); err != nil {
 		log.Fatal("数据库初始化失败:", err)
+	}
+	//加载外部配置文件
+	if err := config.LoadConfig(); err != nil {
+		log.Fatal("加载外部配置文件失败:", err)
 	}
 
 	// 创建Gin路由
@@ -36,6 +41,7 @@ func main() {
 		// 用户相关(无需鉴权)
 		api.POST("/register", handlers.Register)
 		api.POST("/login", handlers.Login)
+		api.GET("/test", handlers.Test)
 
 		// 需要认证的路由
 		auth := api.Group("/")
@@ -64,8 +70,8 @@ func main() {
 	r.GET("/cards/create", handlers.CreateCardPage)
 
 	// 启动服务器
-	log.Info("服务器启动在 http://localhost:18080")
-	if err := r.Run(":18080"); err != nil {
+	log.Info("服务器启动在 http://localhost:" + config.SystemConfig.HTTPPort)
+	if err := r.Run(":" + config.SystemConfig.HTTPPort); err != nil {
 		log.Fatal("服务器启动失败:", err)
 	}
 
@@ -100,3 +106,5 @@ func customGinLogger(pid string) gin.HandlerFunc {
 		log.Info(logMsg)
 	}
 }
+
+// Config 应用程序配置结构体
