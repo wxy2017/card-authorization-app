@@ -95,6 +95,33 @@ function getStatusText(status) {
     return statusMap[status] || status;
 }
 
+//删除卡
+function deleteCard(cardId) {
+    try {
+        if (!confirm('确定要删除这张卡片吗？')) {
+            return;
+        }
+        fetch(`/api/cards/${cardId}/delete`, {
+            method: 'POST',
+            headers: getAuthHeaders()
+        })
+            .then(response => response.json().then(data => ({ response, data })))
+            .then(({ response, data }) => {
+                if (response.ok) {
+                    alert('卡片删除成功！');
+                    loadMyCards();
+                } else {
+                    alert(data.error || '卡片删除失败');
+                }
+            })
+            .catch(error => {
+                alert('网络错误，请重试');
+            });
+    } catch (error) {
+        alert('网络错误，请重试');
+    }
+}
+
 // 获取卡片操作按钮
 function getCardActions(card) {
     if (card.status !== 'active') {
@@ -103,11 +130,23 @@ function getCardActions(card) {
     var loginUser = JSON.parse(localStorage.getItem('user') || '{}');
     var loginUseName = loginUser.username
     if (card.creator.username === loginUseName) {
-        return `
+        if(card.owner.username === loginUseName ){
+            // 卡的拥有者和创建者有删除权限
+            return `
+            <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                <button class="btn btn-primary" onclick="sendCard(${card.id})">发送</button>
+            </div>
+             <div style="margin-top: 0.1rem; display: flex; gap: 0.5rem;">
+                <button class="btn btn-primary" style="background-color: red; color: white;" onclick="deleteCard(${card.id})">删除</button>
+            </div>
+        `;
+        }else {
+            return `
             <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
                 <button class="btn btn-primary" onclick="sendCard(${card.id})">发送</button>
             </div>
         `;
+        }
     } else {
         return `
             <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
@@ -213,9 +252,10 @@ async function loadUserList() {
 
 // 页面加载
 document.addEventListener('DOMContentLoaded', () => {
+    //默认加载我创建的卡
     loadMyCards();
+    //加载用户列表
     loadUserList();
-
     // 点击模态框外部关闭
     document.getElementById('sendModal').addEventListener('click', (e) => {
         if (e.target.id === 'sendModal') {

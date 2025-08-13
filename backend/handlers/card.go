@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"card-authorization/database"
+	"card-authorization/log"
 	"card-authorization/models"
 	"net/http"
 	"time"
@@ -225,5 +226,11 @@ func DeleteCard(c *gin.Context) {
 		c.JSON(http.StatusForbidden, gin.H{"error": "无权删除该卡片"})
 		return
 	}
+	if err := database.DB.Delete(&models.Card{}, cardID).Error; err != nil {
+		log.Error("卡%s删除失败", cardID)
+		c.JSON(http.StatusExpectationFailed, gin.H{"error": "删除失败"})
+		return
+	}
+	log.Error("卡[%d:%s]删除成功", card.ID, card.Title)
 	c.JSON(http.StatusOK, gin.H{"message": "卡片删除成功"})
 }
