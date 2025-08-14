@@ -122,7 +122,7 @@ func UseCard(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "记录交易失败"})
 		return
 	}
-	//发送邮件通知卡片创造者，拥有者已经使用当前卡片
+	//发送邮件通知卡片创造者，拥有者已经使用当前卡片 todo:这里有bug还没有写好
 	if card.Creator.Email != "" {
 		var body = buildEmailBody(card.Owner.Nickname, card.Title)
 		if err := utils.SendEmail(card.Creator.Email, "卡片已被使用："+card.Title, body); err != nil {
