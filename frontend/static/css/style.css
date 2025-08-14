@@ -279,7 +279,7 @@ body {
 }
 
 /* 弹框样式 */
-.modal {
+/* .modal {
     display: none;
     position: fixed;
     top: 0;
@@ -304,7 +304,7 @@ body {
 .modal-content h3 {
     margin-top: 0;
     color: #333;
-}
+} */
 
 /* 表单样式 */
 .form-group {
