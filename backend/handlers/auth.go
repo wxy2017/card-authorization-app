@@ -5,7 +5,6 @@ import (
 	"card-authorization/log"
 	"card-authorization/middleware"
 	"card-authorization/models"
-	"card-authorization/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -133,10 +132,10 @@ func ListUsers(c *gin.Context) {
 }
 
 func Test(c *gin.Context) {
-	toNickname := "1304782185@qq.com"
-	formNickname := "1304782185@qq.com"
-	var body = "恭喜你，收到来自" + formNickname + "的卡：ttt"
-	if err := utils.SendEmail(toNickname, "收到卡：ttt", body); err != nil {
-		log.Error("向%s发送邮件失败", toNickname)
-	}
+	//toNickname := "1304782185@qq.com"
+	//formNickname := "1304782185@qq.com"
+	//var body = "恭喜你，收到来自" + formNickname + "的卡：ttt"
+	//if err := utils.SendEmail(toNickname, "收到卡：ttt", body); err != nil {
+	//	log.Error("向%s发送邮件失败", toNickname)
+	//}
 }

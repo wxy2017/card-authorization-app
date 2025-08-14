@@ -165,7 +165,9 @@ func SendCard(c *gin.Context) {
 	}
 
 	// 更新卡片所有者
+	oldOwner := card.Owner
 	card.OwnerID = toUser.ID
+	card.Owner = models.User{}
 	if err := database.DB.Save(&card).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "发送卡片失败"})
 		return
@@ -185,22 +187,28 @@ func SendCard(c *gin.Context) {
 	// 如果接收者有邮箱则发送邮件
 	if toUser.Email != "" {
 		// Email 不为空的逻辑
-		var body = "恭喜你，收到来自" + card.Owner.Nickname + "的卡：" + card.Title
+		//var body = "恭喜你，收到来自" + oldOwner.Nickname + "的卡：" + card.Title
+		var body = buildEmailBody(oldOwner.Nickname, card.Title)
 		if err := utils.SendEmail(toUser.Email, "收到卡："+card.Title, body); err != nil {
 			log.Error("向%s发送邮件失败", toUser.Nickname)
+			c.JSON(http.StatusOK, gin.H{
+				"message": "卡片发送成功，邮件通知失败！",
+				"card":    card,
+			})
+			return
 		} else {
 			c.JSON(http.StatusOK, gin.H{
-				"message": "卡片发送成功，已邮件通知",
+				"message": "卡片发送成功，已邮件通知！",
 				"card":    card,
 			})
 			return
 		}
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "卡片发送成功",
+			"card":    card,
+		})
 	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"message": "卡片发送成功",
-		"card":    card,
-	})
 }
 
 func SearchUsers(c *gin.Context) {
@@ -248,4 +256,94 @@ func DeleteCard(c *gin.Context) {
 	}
 	log.Error("卡[%d:%s]删除成功", card.ID, card.Title)
 	c.JSON(http.StatusOK, gin.H{"message": "卡片删除成功"})
+}
+
+// 生成美化的邮件内容
+func buildEmailBody(formNickname, cardTitle string) string {
+	body := `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>新卡片通知</title>
+        <style>
+            body {
+                font-family: 'Helvetica Neue', Arial, sans-serif;
+                background-color: #f9f9f9;
+                margin: 0;
+                padding: 20px;
+                color: #333;
+            }
+            .container {
+                max-width: 600px;
+                margin: 0 auto;
+                background-color: white;
+                border-radius: 12px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                overflow: hidden;
+            }
+            .header {
+                background: linear-gradient(135deg, #4a90e2, #5c6bc0);
+                color: white;
+                padding: 25px 30px;
+                text-align: center;
+            }
+            .header h1 {
+                margin: 0;
+                font-size: 24px;
+                font-weight: 600;
+            }
+            .content {
+                padding: 30px;
+                text-align: center;
+            }
+            .greeting {
+                font-size: 18px;
+                margin-bottom: 25px;
+                color: #555;
+            }
+            .card-notification {
+                background-color: #fff8e1;
+                border-left: 5px solid #ffc107;
+                padding: 20px;
+                border-radius: 8px;
+                margin: 20px 0;
+                font-size: 16px;
+                line-height: 1.6;
+            }
+            .highlight {
+                color: #e91e63;
+                font-weight: bold;
+                font-size: 18px;
+            }
+            .footer {
+                background-color: #f5f5f5;
+                padding: 20px 30px;
+                text-align: center;
+                color: #777;
+                font-size: 14px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>🎉 新卡片通知</h1>
+            </div>
+            <div class="content">
+                <p class="greeting">恭喜你！</p>
+                <div class="card-notification">
+                    你收到了来自 <span class="highlight">` + formNickname + `</span> 的卡片：
+                    <br><br>
+                    <span class="highlight">` + cardTitle + `</span>
+                </div>
+            </div>
+            <div class="footer">
+                这是一封自动发送的通知邮件，无需回复
+            </div>
+        </div>
+    </body>
+    </html>
+    `
+	return body
 }

@@ -208,7 +208,7 @@ document.getElementById('sendForm')?.addEventListener('submit', async (e) => {
         const data = await response.json();
 
         if (response.ok) {
-            alert('卡片发送成功！');
+            alert(data.message);
             closeSendModal();
             loadMyCards();
         } else {
