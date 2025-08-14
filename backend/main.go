@@ -58,6 +58,7 @@ func main() {
 			auth.GET("/profile", handlers.GetProfile)
 			auth.GET("/users/search", handlers.SearchUsers)
 			auth.GET("/users/listUsers", handlers.ListUsers)
+			auth.POST("/user/:id/update", handlers.UpdateUser)
 		}
 	}
 

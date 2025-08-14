@@ -261,89 +261,112 @@ func DeleteCard(c *gin.Context) {
 // 生成美化的邮件内容
 func buildEmailBody(formNickname, cardTitle string) string {
 	body := `
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>新卡片通知</title>
-        <style>
-            body {
-                font-family: 'Helvetica Neue', Arial, sans-serif;
-                background-color: #f9f9f9;
-                margin: 0;
-                padding: 20px;
-                color: #333;
-            }
-            .container {
-                max-width: 600px;
-                margin: 0 auto;
-                background-color: white;
-                border-radius: 12px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-                overflow: hidden;
-            }
-            .header {
-                background: linear-gradient(135deg, #4a90e2, #5c6bc0);
-                color: white;
-                padding: 25px 30px;
-                text-align: center;
-            }
-            .header h1 {
-                margin: 0;
-                font-size: 24px;
-                font-weight: 600;
-            }
-            .content {
-                padding: 30px;
-                text-align: center;
-            }
-            .greeting {
-                font-size: 18px;
-                margin-bottom: 25px;
-                color: #555;
-            }
-            .card-notification {
-                background-color: #fff8e1;
-                border-left: 5px solid #ffc107;
-                padding: 20px;
-                border-radius: 8px;
-                margin: 20px 0;
-                font-size: 16px;
-                line-height: 1.6;
-            }
-            .highlight {
-                color: #e91e63;
-                font-weight: bold;
-                font-size: 18px;
-            }
-            .footer {
-                background-color: #f5f5f5;
-                padding: 20px 30px;
-                text-align: center;
-                color: #777;
-                font-size: 14px;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <div class="header">
-                <h1>🎉 新卡片通知</h1>
-            </div>
-            <div class="content">
-                <p class="greeting">恭喜你！</p>
-                <div class="card-notification">
-                    你收到了来自 <span class="highlight">` + formNickname + `</span> 的卡片：
-                    <br><br>
-                    <span class="highlight">` + cardTitle + `</span>
+        <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <title>新卡片通知</title>
+                <style>
+                    body {
+                        font-family: 'Helvetica Neue', Arial, sans-serif;
+                        background-color: #f9f9f9;
+                        margin: 0;
+                        padding: 20px;
+                        color: #333;
+                    }
+                    .container {
+                        max-width: 600px;
+                        margin: 0 auto;
+                        background-color: white;
+                        border-radius: 12px;
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                        overflow: hidden;
+                    }
+                    .header {
+                        background: linear-gradient(135deg, #4a90e2, #5c6bc0);
+                        color: white;
+                        padding: 25px 30px;
+                        text-align: center;
+                    }
+                    .header h1 {
+                        margin: 0;
+                        font-size: 24px;
+                        font-weight: 600;
+                    }
+                    .content {
+                        padding: 30px;
+                        text-align: center;
+                    }
+                    .greeting {
+                        font-size: 18px;
+                        margin-bottom: 25px;
+                        color: #555;
+                    }
+                    .card-notification {
+                        background-color: #fff8e1;
+                        border-left: 5px solid #ffc107;
+                        padding: 20px;
+                        border-radius: 8px;
+                        margin: 20px 0;
+                        font-size: 16px;
+                        line-height: 1.6;
+                    }
+                    .highlight {
+                        color: #e91e63;
+                        font-weight: bold;
+                        font-size: 18px;
+                    }
+                    .app-link {
+                        margin: 30px 0;
+                        padding: 20px;
+                        background-color: #e3f2fd;
+                        border-radius: 8px;
+                    }
+                    .app-link a {
+                        color: #1976d2;
+                        font-size: 18px;
+                        font-weight: bold;
+                        text-decoration: none;
+                        border-bottom: 2px solid #1976d2;
+                        padding-bottom: 3px;
+                    }
+                    .app-link a:hover {
+                        color: #0d47a1;
+                        border-bottom-color: #0d47a1;
+                    }
+                    .footer {
+                        background-color: #f5f5f5;
+                        padding: 20px 30px;
+                        text-align: center;
+                        color: #777;
+                        font-size: 14px;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>🎉 新卡片通知</h1>
+                    </div>
+                    <div class="content">
+                        <p class="greeting">恭喜你！</p>
+                        <div class="card-notification">
+                            你收到了来自 <span class="highlight">` + formNickname + `</span> 的卡：
+                            <br><br>
+                            <span class="highlight">` + cardTitle + `</span>
+                        </div>
+                        <div class="app-link">
+                            点击访问应用查看详情：<br><br>
+                            <a href="http://wangxiang-pro.top:18080/" target="_blank">点我查看吆🎀</a>
+                        </div>
+                        <p>快去体验专为情侣和朋友设计的互动卡片系统吧～</p>
+                    </div>
+                    <div class="footer">
+                        这是一封自动发送的通知邮件，无需回复
+                    </div>
                 </div>
-            </div>
-            <div class="footer">
-                这是一封自动发送的通知邮件，无需回复
-            </div>
-        </div>
-    </body>
-    </html>
+            </body>
+        </html>
     `
 	return body
 }

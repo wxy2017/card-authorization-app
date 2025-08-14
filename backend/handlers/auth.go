@@ -130,6 +130,39 @@ func ListUsers(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"users": users})
 }
+func UpdateUser(c *gin.Context) {
+	// 定义接收前端数据的结构体
+	type Request struct {
+		User models.User `json:"user"`
+	}
+
+	var req Request
+	// 绑定并验证前端传递的JSON数据
+	if err := c.ShouldBindJSON(&req); err != nil {
+		log.Error("数据绑定失败", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "无效的请求数据"})
+		return
+	}
+
+	// 检查用户ID是否存在
+	if req.User.ID == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "用户ID不能为空"})
+		return
+	}
+
+	// 执行更新操作
+	if err := database.DB.Model(&models.User{}).Where("id = ?", req.User.ID).Updates(&req.User).Error; err != nil {
+		log.Error("更新用户失败", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "更新用户失败"})
+		return
+	}
+
+	// 返回更新成功的响应
+	c.JSON(http.StatusOK, gin.H{
+		"message": "用户信息更新成功",
+		"user":    req.User,
+	})
+}
 
 func Test(c *gin.Context) {
 	//toNickname := "1304782185@qq.com"

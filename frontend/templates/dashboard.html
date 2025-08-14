@@ -10,7 +10,42 @@
     <div class="container">
         <div class="header">
             <h1>控制台</h1>
-            <p>欢迎回来，<span id="userNickname">用户</span></p>
+            <p style="position: relative; padding-right: 120px;">
+                欢迎回来，<span id="showUserNickname" class="gradient-text"></span>
+                <span id="showEmail" style="position: absolute; right: 0;" class="gradient-text"></span>
+            </p>
+        </div>
+
+        <!-- 弹框组件 -->
+        <div id="emailModal" class="modal">
+            <div class="modal-content">
+                <h3>修改邮箱地址</h3>
+                <div class="form-group">
+                    <label for="newEmail">新邮箱地址：</label>
+                    <input type="email" id="newEmail" placeholder="请输入新邮箱">
+                    <div id="emailError" class="error-message"></div>
+                </div>
+                <div class="modal-actions">
+                    <button id="cancelBtn" class="btn cancel-btn">取消</button>
+                    <button id="saveBtn" class="btn save-btn">保存修改</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 弹框组件 -->
+        <div id="nikNameModal" class="modal">
+            <div class="modal-content">
+                <h3>修改昵称</h3>
+                <div class="form-group">
+                    <label for="newNikName">新昵称：</label>
+                    <input type="email" id="newNikName" placeholder="请输入昵称">
+                    <div id="nikNameError" class="error-message"></div>
+                </div>
+                <div class="modal-actions">
+                    <button id="nikNameCancelBtn" class="btn cancel-btn">取消</button>
+                    <button id="nikNameSaveBtn" class="btn save-btn">保存修改</button>
+                </div>
+            </div>
         </div>
         
         <div class="card">
