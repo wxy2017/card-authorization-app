@@ -73,7 +73,7 @@ func GetReceivedCards(c *gin.Context) {
 	var cards []models.Card
 	if err := database.DB.Preload("Creator").Preload("Owner").
 		Where("owner_id = ? AND creator_id != ?", userID, userID).
-		Order("created_at DESC").
+		Order("updated_at,status DESC").
 		Find(&cards).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "获取卡片失败"})
 		return
@@ -133,6 +133,23 @@ func UseCard(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "卡片使用成功",
 		"card":    card,
+	})
+}
+
+func UsedCard(c *gin.Context) {
+	userID := c.GetUint("userID")
+
+	var cards []models.Card
+	if err := database.DB.Preload("Creator").Preload("Owner").
+		Where("creator_id=? or owner_id=?", userID, userID).
+		Where("status=?", "used").
+		Find(&cards).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "卡片不存在"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "查询成功",
+		"cards":   cards,
 	})
 }
 

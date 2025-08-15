@@ -6,6 +6,7 @@ let currentCardId = null;
 function showTab(tab) {
     document.getElementById('myCards').style.display = tab === 'my' ? 'block' : 'none';
     document.getElementById('receivedCards').style.display = tab === 'received' ? 'block' : 'none';
+    document.getElementById('usedCards').style.display = tab === 'used' ? 'block' : 'none';
 
     // 更新按钮样式
     document.querySelectorAll('.card button').forEach(btn => {
@@ -18,8 +19,10 @@ function showTab(tab) {
     // 加载对应数据
     if (tab === 'my') {
         loadMyCards();
-    } else {
+    } else if (tab === 'received') {
         loadReceivedCards();
+    }else if (tab === 'used') {
+        loadUsedCards();
     }
 }
 
@@ -51,6 +54,24 @@ async function loadReceivedCards() {
         if (response.ok) {
             const data = await response.json();
             displayCards(data.cards, 'receivedCards');
+        } else if (response.status === 401) {
+            logout();
+        }
+    } catch (error) {
+        console.error('加载卡片失败:', error);
+    }
+}
+
+async function loadUsedCards() {
+    try {
+        const response = await fetch(`/api/cards/used`, {
+            method: 'POST',
+            headers: getAuthHeaders()
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            displayCards(data.cards, 'usedCards');
         } else if (response.status === 401) {
             logout();
         }
@@ -255,7 +276,9 @@ async function loadMyAction() {
     const tab = urlParams.get('tab');
     if (tab === 'created') {
         document.getElementById('createdCardsTab').click();
-    } else {
+    }else if(tab === 'used' ){
+        document.getElementById('usedCardsTab').click();
+    }else {
         document.getElementById('receivedCardsTab').click();
     }
 }
