@@ -238,7 +238,7 @@ async function loadNikNameModal() {
     });
 
     // 按Enter键保存
-    newEmailInput.addEventListener('keydown', (e) => {
+    newNikNameInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             saveBtn.click();
         }

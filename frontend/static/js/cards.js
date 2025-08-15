@@ -249,6 +249,17 @@ async function loadUserList() {
     }
 }
 
+//自动跳转 “收到的”或“我创建的”
+async function loadMyAction() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tab = urlParams.get('tab');
+    if (tab === 'created') {
+        document.getElementById('createdCardsTab').click();
+    } else {
+        document.getElementById('receivedCardsTab').click();
+    }
+}
+
 // 页面加载
 document.addEventListener('DOMContentLoaded', () => {
     //默认加载我收到的卡
@@ -261,6 +272,8 @@ document.addEventListener('DOMContentLoaded', () => {
             closeSendModal();
         }
     });
+    //加载card?tab=[created|owner]
+    loadMyAction();
 });
 
 
