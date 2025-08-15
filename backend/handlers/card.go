@@ -23,12 +23,12 @@ type SendCardRequest struct {
 
 func CreateCard(c *gin.Context) {
 	userID := c.GetUint("userID")
-
 	var req CreateCardRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	log.Info("Received req: %+v", req)
 
 	card := &models.Card{
 		Title:       req.Title,
@@ -504,4 +504,31 @@ func buildEmailBodyOfUse(formNickname, cardTitle string) string {
         </html>
     `
 	return body
+}
+
+// CheckExpiredCards 定时确认card过期状态
+func CheckExpiredCards() {
+	// 启动时立即运行一次
+	processExpiredCards()
+
+	// 每5小时运行一次
+	ticker := time.NewTicker(5 * time.Hour)
+	defer ticker.Stop()
+
+	for {
+		<-ticker.C
+		processExpiredCards()
+	}
+}
+
+// 修改过期状态
+func processExpiredCards() {
+	var cards []models.Card
+	now := time.Now()
+	// 查询并更新所有符合条件的过期卡片
+	database.DB.Where("expires_at < ? AND status = ?", now, "active").Find(&cards)
+	for _, card := range cards {
+		card.Status = "expired"
+		database.DB.Save(&card)
+	}
 }

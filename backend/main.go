@@ -71,6 +71,9 @@ func main() {
 	r.GET("/cards", handlers.CardsPage)
 	r.GET("/cards/create", handlers.CreateCardPage)
 
+	//启动定时器
+	go handlers.CheckExpiredCards()
+
 	// 启动服务器
 	log.Info("服务器启动在 http://localhost:" + config.SystemConfig.HTTPPort)
 	if err := r.Run(":" + config.SystemConfig.HTTPPort); err != nil {
@@ -108,5 +111,3 @@ func customGinLogger(pid string) gin.HandlerFunc {
 		log.Info(logMsg)
 	}
 }
-
-// Config 应用程序配置结构体

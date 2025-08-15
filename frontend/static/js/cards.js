@@ -95,7 +95,13 @@ function displayCards(cards, containerId) {
                 <h3 class="card-title">${card.title}</h3>
                 <span class="card-status status-${card.status}">${getStatusText(card.status)}</span>
             </div>
-            <p class="card-description">${card.description}</p>
+           <div style="display: flex; justify-content: space-between;">
+              <span class="card-description">${card.description}</span>
+              ${card.status === 'active' ? `
+                <span class="card-description">
+                    ${getRemainingTime(card.expires_at)}
+                </span>` : ''}
+            </div>
             <div class="card-meta">
                 <span>创建者：${card.creator.nickname || card.creator.username}</span>
                 <span>所属者：${card.owner.nickname || card.owner.username}</span>
@@ -104,6 +110,19 @@ function displayCards(cards, containerId) {
             ${getCardActions(card)}
         </div>
     `).join('');
+}
+
+// 计算剩余天数
+function getRemainingTime(expiresAt) {
+    if (!expiresAt) return '';
+    const now = new Date();
+    const expireDate = new Date(expiresAt);
+    const diffMs = expireDate - now;
+    if (diffMs <= 0) return '';
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    return days > 0 ? `<div style="font-weight: 600; font-size: 12px;">剩余<span style="color: #ef4444">${days}</span>天</div>` :
+        `<div style="font-weight: 600; font-size: 12px;">剩余<span style="color: #ef4444">${hours}</span>小时</div>`;
 }
 
 // 获取状态文本
@@ -145,11 +164,18 @@ function deleteCard(cardId) {
 
 // 获取卡片操作按钮
 function getCardActions(card) {
-    if (card.status !== 'active') {
-        return '';
-    }
     var loginUser = JSON.parse(localStorage.getItem('user') || '{}');
     var loginUseName = loginUser.username
+    if (card.status !== 'active') {
+        if(card.status === 'expired' && card.creator.username === loginUseName && card.owner.username === loginUseName ){
+            return `
+             <div style="margin-top: 0.1rem; display: flex; gap: 0.5rem;">
+                <button class="btn btn-primary" style="background-color: red; color: white;" onclick="deleteCard(${card.id})">删除</button>
+            </div>`;
+        }
+        return '';
+    }
+
     if (card.creator.username === loginUseName) {
         if(card.owner.username === loginUseName ){
             // 卡的拥有者和创建者有删除权限
