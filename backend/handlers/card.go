@@ -122,10 +122,10 @@ func UseCard(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "记录交易失败"})
 		return
 	}
-	//发送邮件通知卡片创造者，拥有者已经使用当前卡片 todo:这里有bug还没有写好
+	//发送邮件通知卡片创造者，拥有者已经使用当前卡片
 	if card.Creator.Email != "" {
-		var body = buildEmailBody(card.Owner.Nickname, card.Title)
-		if err := utils.SendEmail(card.Creator.Email, "卡片已被使用："+card.Title, body); err != nil {
+		var body = buildEmailBodyOfUse(card.Owner.Nickname, card.Title)
+		if err := utils.SendEmail(card.Creator.Email, card.Title, body); err != nil {
 			log.Error("向%s发送邮件失败", card.Creator.Nickname)
 		}
 	}
@@ -193,10 +193,8 @@ func SendCard(c *gin.Context) {
 	}
 	// 如果接收者有邮箱则发送邮件
 	if toUser.Email != "" {
-		// Email 不为空的逻辑
-		//var body = "恭喜你，收到来自" + oldOwner.Nickname + "的卡：" + card.Title
-		var body = buildEmailBody(oldOwner.Nickname, card.Title)
-		if err := utils.SendEmail(toUser.Email, "收到卡："+card.Title, body); err != nil {
+		var body = buildEmailBodyOfSend(oldOwner.Nickname, card.Title)
+		if err := utils.SendEmail(toUser.Email, card.Title, body); err != nil {
 			log.Error("向%s发送邮件失败", toUser.Nickname)
 			c.JSON(http.StatusOK, gin.H{
 				"message": "卡片发送成功，邮件通知失败！",
@@ -265,8 +263,8 @@ func DeleteCard(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "卡片删除成功"})
 }
 
-// 生成美化的邮件内容
-func buildEmailBody(formNickname, cardTitle string) string {
+// 生成美化的邮件内容(发送卡)
+func buildEmailBodyOfSend(formNickname, cardTitle string) string {
 	body := `
         <!DOCTYPE html>
             <html>
@@ -359,6 +357,119 @@ func buildEmailBody(formNickname, cardTitle string) string {
                         <p class="greeting">恭喜你！</p>
                         <div class="card-notification">
                             你收到了来自 <span class="highlight">` + formNickname + `</span> 的卡：
+                            <br><br>
+                            <span class="highlight">` + cardTitle + `</span>
+                        </div>
+                        <div class="app-link">
+                            点击访问应用查看详情：<br><br>
+                            <a href="http://wangxiang-pro.top:18080/" target="_blank">点我查看吆🎀</a>
+                        </div>
+                        <p>快去体验专为情侣和朋友设计的互动卡片系统吧～</p>
+                    </div>
+                    <div class="footer">
+                        这是一封自动发送的通知邮件，无需回复
+                    </div>
+                </div>
+            </body>
+        </html>
+    `
+	return body
+}
+
+// 生成美化的邮件内容（使用卡）
+func buildEmailBodyOfUse(formNickname, cardTitle string) string {
+	body := `
+        <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <title>用卡通知</title>
+                <style>
+                    body {
+                        font-family: 'Helvetica Neue', Arial, sans-serif;
+                        background-color: #f9f9f9;
+                        margin: 0;
+                        padding: 20px;
+                        color: #333;
+                    }
+                    .container {
+                        max-width: 600px;
+                        margin: 0 auto;
+                        background-color: white;
+                        border-radius: 12px;
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                        overflow: hidden;
+                    }
+                    .header {
+                        background: linear-gradient(135deg, #4a90e2, #5c6bc0);
+                        color: white;
+                        padding: 25px 30px;
+                        text-align: center;
+                    }
+                    .header h1 {
+                        margin: 0;
+                        font-size: 24px;
+                        font-weight: 600;
+                    }
+                    .content {
+                        padding: 30px;
+                        text-align: center;
+                    }
+                    .greeting {
+                        font-size: 18px;
+                        margin-bottom: 25px;
+                        color: #555;
+                    }
+                    .card-notification {
+                        background-color: #fff8e1;
+                        border-left: 5px solid #ffc107;
+                        padding: 20px;
+                        border-radius: 8px;
+                        margin: 20px 0;
+                        font-size: 16px;
+                        line-height: 1.6;
+                    }
+                    .highlight {
+                        color: #e91e63;
+                        font-weight: bold;
+                        font-size: 18px;
+                    }
+                    .app-link {
+                        margin: 30px 0;
+                        padding: 20px;
+                        background-color: #e3f2fd;
+                        border-radius: 8px;
+                    }
+                    .app-link a {
+                        color: #1976d2;
+                        font-size: 18px;
+                        font-weight: bold;
+                        text-decoration: none;
+                        border-bottom: 2px solid #1976d2;
+                        padding-bottom: 3px;
+                    }
+                    .app-link a:hover {
+                        color: #0d47a1;
+                        border-bottom-color: #0d47a1;
+                    }
+                    .footer {
+                        background-color: #f5f5f5;
+                        padding: 20px 30px;
+                        text-align: center;
+                        color: #777;
+                        font-size: 14px;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>🎉 用卡通知</h1>
+                    </div>
+                    <div class="content">
+                        <p class="greeting">你好！</p>
+                        <div class="card-notification">
+							<span class="highlight">` + formNickname + `</span>使用了来自你的卡：
                             <br><br>
                             <span class="highlight">` + cardTitle + `</span>
                         </div>

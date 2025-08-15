@@ -9,14 +9,6 @@ import (
 	"strings"
 )
 
-// EmailConfig 邮件配置结构体
-type EmailConfig struct {
-	SMTPHost     string
-	SMTPPort     int
-	AuthEmail    string
-	AuthPassword string
-}
-
 // SendEmail 发送邮件
 func SendEmail(to, subject, body string) error {
 	// 发件人信息
