@@ -1,2 +1,4 @@
 .vscode/launch.json
 backend/card_authorization.db
+backend/card_authorization
+backend/config.yaml
