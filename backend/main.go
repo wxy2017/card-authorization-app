@@ -25,6 +25,7 @@ func main() {
 
 	// 创建Gin路由
 	gin.SetMode(gin.ReleaseMode)
+
 	r := gin.New()
 	// 移除默认日志中间件
 	r.Use(gin.Recovery())
@@ -34,6 +35,14 @@ func main() {
 	// 静态文件服务
 	r.Static("/static", "../frontend/static")
 	r.LoadHTMLGlob("../frontend/templates/*")
+
+	// 前端页面路由
+	r.GET("/", handlers.Index)
+	r.GET("/login", handlers.LoginPage)
+	r.GET("/register", handlers.RegisterPage)
+	r.GET("/dashboard", handlers.Dashboard)
+	r.GET("/cards", handlers.CardsPage)
+	r.GET("/cards/create", handlers.CreateCardPage)
 
 	// API路由组
 	api := r.Group("/api")
@@ -62,14 +71,6 @@ func main() {
 			auth.POST("/user/:id/update", handlers.UpdateUser)
 		}
 	}
-
-	// 前端页面路由
-	r.GET("/", handlers.Index)
-	r.GET("/login", handlers.LoginPage)
-	r.GET("/register", handlers.RegisterPage)
-	r.GET("/dashboard", handlers.Dashboard)
-	r.GET("/cards", handlers.CardsPage)
-	r.GET("/cards/create", handlers.CreateCardPage)
 
 	//启动定时器
 	go handlers.CheckExpiredCards()
