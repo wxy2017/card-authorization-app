@@ -105,7 +105,7 @@ function displayCards(cards, containerId) {
             <div class="card-meta">
                 <span>创建者：${card.creator.nickname || card.creator.username}</span>
                 <span>所属者：${card.owner.nickname || card.owner.username}</span>
-                <span>${formatDate(card.created_at)}</span>
+                <span>${formatDate(card.updated_at)}</span>
             </div>
             ${getCardActions(card)}
         </div>

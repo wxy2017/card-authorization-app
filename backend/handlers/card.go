@@ -58,7 +58,7 @@ func GetMyCards(c *gin.Context) {
 	var cards []models.Card
 	if err := database.DB.Preload("Creator").Preload("Owner").
 		Where("creator_id = ?", userID).
-		Order("created_at DESC").
+		Order("status,updated_at DESC").
 		Find(&cards).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "获取卡片失败"})
 		return
@@ -73,7 +73,7 @@ func GetReceivedCards(c *gin.Context) {
 	var cards []models.Card
 	if err := database.DB.Preload("Creator").Preload("Owner").
 		Where("owner_id = ? AND creator_id != ?", userID, userID).
-		Order("updated_at,status DESC").
+		Order("status,updated_at DESC").
 		Find(&cards).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "获取卡片失败"})
 		return
@@ -106,6 +106,7 @@ func UseCard(c *gin.Context) {
 
 	// 更新卡片状态
 	card.Status = models.CardStatusUsed
+	card.UpdatedAt = time.Now()
 	if err := database.DB.Save(&card).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "更新卡片状态失败"})
 		return
@@ -192,6 +193,7 @@ func SendCard(c *gin.Context) {
 	oldOwner := card.Owner
 	card.OwnerID = toUser.ID
 	card.Owner = models.User{}
+	card.UpdatedAt = time.Now()
 	if err := database.DB.Save(&card).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "发送卡片失败"})
 		return
@@ -529,6 +531,7 @@ func processExpiredCards() {
 	database.DB.Where("expires_at < ? AND status = ?", now, "active").Find(&cards)
 	for _, card := range cards {
 		card.Status = "expired"
+		card.UpdatedAt = time.Now()
 		database.DB.Save(&card)
 	}
 }
