@@ -107,7 +107,7 @@ function displayCards(cards, containerId) {
                 <span>所属者：${card.owner.nickname || card.owner.username}</span>
                 <span>${formatDate(card.updated_at)}</span>
             </div>
-            ${getCardActions(card)}
+            ${getCardActions(card,containerId)}
         </div>
     `).join('');
 }
@@ -136,7 +136,7 @@ function getStatusText(status) {
 }
 
 //删除卡
-function deleteCard(cardId) {
+function deleteCard(cardId, containerId) {
     try {
         if (!confirm('确定要删除这张卡片吗？')) {
             return;
@@ -149,7 +149,16 @@ function deleteCard(cardId) {
             .then(({ response, data }) => {
                 if (response.ok) {
                     alert('卡片删除成功！');
-                    loadMyCards();
+                    switch (containerId) {
+                        case "myCards":
+                            loadMyCards();
+                            break;
+                        case "receivedCards":
+                            loadReceivedCards()
+                            break;
+                        case "usedCards":
+                            loadUsedCards()
+                    }
                 } else {
                     alert(data.error || '卡片删除失败');
                 }
@@ -163,14 +172,14 @@ function deleteCard(cardId) {
 }
 
 // 获取卡片操作按钮
-function getCardActions(card) {
+function getCardActions(card,containerId) {
     var loginUser = JSON.parse(localStorage.getItem('user') || '{}');
     var loginUseName = loginUser.username
     if (card.status !== 'active') {
-        if(card.status === 'expired' && card.creator.username === loginUseName && card.owner.username === loginUseName ){
+        if(card.creator.username === loginUseName && card.owner.username === loginUseName ){
             return `
              <div style="margin-top: 0.1rem; display: flex; gap: 0.5rem;">
-                <button class="btn btn-primary" style="background-color: red; color: white;" onclick="deleteCard(${card.id})">删除</button>
+                <button class="btn btn-primary" style="background-color: red; color: white;" onclick="deleteCard(${card.id},'${containerId}')">删除</button>
             </div>`;
         }
         return '';
