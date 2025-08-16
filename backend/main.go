@@ -69,6 +69,7 @@ func main() {
 			auth.GET("/users/search", handlers.SearchUsers)
 			auth.GET("/users/listUsers", handlers.ListUsers)
 			auth.POST("/user/:id/update", handlers.UpdateUser)
+			auth.GET("/users/lastActive", handlers.LastActive)
 		}
 	}
 

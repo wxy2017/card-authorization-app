@@ -6,6 +6,7 @@ import (
 	"card-authorization/middleware"
 	"card-authorization/models"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -164,11 +165,42 @@ func UpdateUser(c *gin.Context) {
 	})
 }
 
+// LastActive 我最近的活动
+func LastActive(c *gin.Context) {
+	userID := c.GetUint("userID")
+	userID = 1
+	//最新发送给我的卡
+	//最近我我创建的卡
+	//最近我使用的卡
+	//最近我发送给别人的卡
+
+	// 定义一个包含交易时间的结构体
+	type CardWithTransaction struct {
+		Card                 models.Card
+		TransactionCreatedAt time.Time `json:"transaction_created_at"` // 来自card_transactions表的created_at
+	}
+	var res []CardWithTransaction
+	if err := database.DB.Table("cards").
+		Joins("JOIN card_transactions ct ON ct.card_id = cards.id").
+		Where("cards.status != ?", "expired").
+		Where("ct.from_user_id = ? OR ct.to_user_id = ?", userID, userID).
+		Select("cards.*, ct.created_at as transaction_created_at"). // 明确选择需要的字段
+		Order("ct.created_at DESC").
+		Limit(5).
+		Preload("Creator").
+		Preload("Owner").
+		Scan(&res).Error; err != nil {
+		log.Error("数据查询异常", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "数据查询异常"})
+		return
+	}
+	// 返回更新成功的响应
+	c.JSON(http.StatusOK, gin.H{
+		"message": "最近活动信息",
+		"cards":   res,
+	})
+}
+
 func Test(c *gin.Context) {
-	//toNickname := "1304782185@qq.com"
-	//formNickname := "1304782185@qq.com"
-	//var body = "恭喜你，收到来自" + formNickname + "的卡：ttt"
-	//if err := utils.SendEmail(toNickname, "收到卡：ttt", body); err != nil {
-	//	log.Error("向%s发送邮件失败", toNickname)
-	//}
+	LastActive(c)
 }
