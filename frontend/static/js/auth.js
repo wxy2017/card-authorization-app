@@ -15,7 +15,11 @@ document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
     
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
-    
+    const rememberMe = document.getElementById('rememberMe')?.checked;
+    // 记住我功能
+    if (rememberMe) {
+        document.cookie = `auth_token=${data.token}; max-age=${30*24*60*60}; path=/`;
+    }
     try {
         const response = await fetch('/api/login', {
             method: 'POST',
