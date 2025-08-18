@@ -2,3 +2,4 @@
 backend/card_authorization.db
 backend/card_authorization
 backend/config.yaml
+backend/_debug*

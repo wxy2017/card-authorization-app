@@ -81,7 +81,7 @@ async function loadRecentActivity() {
                         `;
                     }
                 }else{
-                    if(card.transaction_type === "sned"){
+                    if(card.transaction_type === "send"){
                         //发送对方卡
                         cardElement.innerHTML = `
                         <h4><small>${new Date(card.transaction_at).toLocaleString()}</small></h4>
@@ -101,14 +101,6 @@ async function loadRecentActivity() {
                     }
                 }
                 recentActivityElement.appendChild(cardElement);
-
-                //
-                // cardElement.innerHTML = `
-                //     <h4>${card.creator_nickname}</h4>
-                //     <p>${card.card_description}</p>
-                //     <small>时间: ${new Date(card.transaction_at).toLocaleString()}</small>
-                // `;
-                // recentActivityElement.appendChild(cardElement);
             });
         } else {
             // 暂时显示暂无活动
