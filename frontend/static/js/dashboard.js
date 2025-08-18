@@ -47,7 +47,33 @@ async function loadStats() {
 // 加载最近活动
 async function loadRecentActivity() {
     // 这里可以添加加载最近活动的逻辑
-    // 暂时显示暂无活动
+    const recentActivityElement = document.getElementById('recentActivity');
+   
+      try {
+        const response = await fetch('/api/users/lastActive', {
+            headers: getAuthHeaders()
+        });
+        const data = await response.json();
+        if (response.ok) {
+            data.activeCards.forEach(card => {
+                const cardElement = document.createElement('div');
+                cardElement.classList.add('card');
+                cardElement.innerHTML = `
+                    <h4>${card.creator_nickname}</h4>
+                    <p>${card.card_description}</p>
+                    <small>创建于: ${new Date(card.transaction_at).toLocaleString()}</small>
+                `;
+                recentActivityElement.appendChild(cardElement);
+            });
+        } else {
+            // 暂时显示暂无活动
+            recentActivityElement.textContent = '暂无活动';
+        }
+    } catch (error) {
+        console.error('加载用户信息失败:', error);
+    }
+
+
 }
 
 // 加载邮件修改元素

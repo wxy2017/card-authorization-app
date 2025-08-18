@@ -174,30 +174,50 @@ func LastActive(c *gin.Context) {
 	//最近我使用的卡
 	//最近我发送给别人的卡
 
-	// 定义一个包含交易时间的结构体
-	type CardWithTransaction struct {
-		Card                 models.Card
-		TransactionCreatedAt time.Time `json:"transaction_created_at"` // 来自card_transactions表的created_at
-	}
-	var res []CardWithTransaction
+	var cards []models.Card
 	if err := database.DB.Table("cards").
-		Joins("JOIN card_transactions ct ON ct.card_id = cards.id").
-		Where("cards.status != ?", "expired").
-		Where("ct.from_user_id = ? OR ct.to_user_id = ?", userID, userID).
-		Select("cards.*, ct.created_at as transaction_created_at"). // 明确选择需要的字段
-		Order("ct.created_at DESC").
-		Limit(5).
 		Preload("Creator").
 		Preload("Owner").
-		Scan(&res).Error; err != nil {
-		log.Error("数据查询异常", err)
+		Joins("INNER JOIN card_transactions ct ON ct.card_id = cards.id").
+		Where("cards.status != ?", "expired").
+		Where("ct.from_user_id = ? OR ct.to_user_id = ?", userID, userID).
+		Select("cards.*, ct.created_at as transaction_at, ct.type as transaction_type").
+		Order("ct.created_at DESC").
+		Limit(5).
+		Find(&cards).Error; err != nil {
+		log.Error("数据查询异常: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "数据查询异常"})
 		return
 	}
+
+	//格式化数据
+	type Active struct {
+		CreatorNickname string    `json:"creator_nickname"`
+		OwnerNickname   string    `json:"owner_nickname"`
+		CreatorID       uint      `json:"creator_id"`
+		CardTitle       string    `json:"card_title"`
+		CardDescription string    `json:"card_description"`
+		TransactionAt   time.Time `json:"transaction_at"`
+		TransactionType string    `json:"transaction_type"`
+	}
+
+	activeCards := make([]Active, 0, 5)
+	for i := range cards {
+		activeCards = append(activeCards, Active{
+			CreatorNickname: cards[i].Creator.Nickname,
+			OwnerNickname:   cards[i].Owner.Nickname,
+			CreatorID:       cards[i].CreatorID,
+			CardTitle:       cards[i].Title,
+			CardDescription: cards[i].Description,
+			TransactionAt:   *cards[i].TransactionAt,
+			TransactionType: cards[i].TransactionType,
+		})
+	}
+
 	// 返回更新成功的响应
 	c.JSON(http.StatusOK, gin.H{
-		"message": "最近活动信息",
-		"cards":   res,
+		"message":     "最近活动信息",
+		"activeCards": activeCards,
 	})
 }
 
