@@ -55,15 +55,60 @@ async function loadRecentActivity() {
         });
         const data = await response.json();
         if (response.ok) {
+            var loginUser = JSON.parse(localStorage.getItem('user') || '{}');
             data.activeCards.forEach(card => {
                 const cardElement = document.createElement('div');
                 cardElement.classList.add('card');
-                cardElement.innerHTML = `
-                    <h4>${card.creator_nickname}</h4>
-                    <p>${card.card_description}</p>
-                    <small>创建于: ${new Date(card.transaction_at).toLocaleString()}</small>
-                `;
+                var userId=loginUser.id;
+                if(card.creator_id !== userId){
+                    if(card.transaction_type === "send"){
+                        //收到对方发的卡
+                        cardElement.innerHTML = `
+                        <h4><small>${new Date(card.transaction_at).toLocaleString()}</small></h4>
+                        <small>收到了</small>
+                        <span class="gradient-text">${card.creator_nickname}</span>
+                        <small>的</small>
+                        <span class="gradient-text">${card.card_title}</span>
+                        `;
+                    }else{
+                        //收到对方发的卡
+                        cardElement.innerHTML = `
+                        <h4><small>${new Date(card.transaction_at).toLocaleString()}</small></h4>
+                        <small>使用了</small>
+                        <span class="gradient-text">${card.creator_nickname}</span>
+                        <small>的</small>
+                        <span class="gradient-text">${card.card_title}</span>
+                        `;
+                    }
+                }else{
+                    if(card.transaction_type === "sned"){
+                        //发送对方卡
+                        cardElement.innerHTML = `
+                        <h4><small>${new Date(card.transaction_at).toLocaleString()}</small></h4>
+                        <small>发送了</small>
+                        <span class="gradient-text">${card.card_title}</span>
+                        <small>给</small>
+                        <span class="gradient-text">${card.owner_nickname}</span>
+                        `;
+                    }else{
+                        //对方使用了我的卡
+                        cardElement.innerHTML = `
+                        <h4><small>${new Date(card.transaction_at).toLocaleString()}</small></h4>
+                        <span class="gradient-text">${card.owner_nickname}</span>
+                        <small>使用了你的</small>
+                        <span class="gradient-text">${card.card_title}</span>                        
+                        `;
+                    }
+                }
                 recentActivityElement.appendChild(cardElement);
+
+                //
+                // cardElement.innerHTML = `
+                //     <h4>${card.creator_nickname}</h4>
+                //     <p>${card.card_description}</p>
+                //     <small>时间: ${new Date(card.transaction_at).toLocaleString()}</small>
+                // `;
+                // recentActivityElement.appendChild(cardElement);
             });
         } else {
             // 暂时显示暂无活动
