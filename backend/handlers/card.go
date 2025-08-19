@@ -282,6 +282,33 @@ func DeleteCard(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "卡片删除成功"})
 }
 
+// CopyCard 复制卡
+func CopyCard(c *gin.Context) {
+	userID := c.GetUint("userID")
+	cardID := c.Param("id")
+
+	//根据卡ID获取卡的Title 和 Description
+	var card models.Card
+	if err := database.DB.First(&card, cardID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "卡片不存在"})
+		return
+	}
+	//复制卡
+	cardNew := &models.Card{
+		Title:       card.Title,
+		Description: card.Description,
+		CreatorID:   userID,
+		OwnerID:     userID,
+	}
+	if err := database.DB.Create(cardNew).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "创建卡片失败"})
+		return
+	}
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "卡片创建成功",
+	})
+}
+
 // 生成美化的邮件内容(发送卡)
 func buildEmailBodyOfSend(formNickname, cardTitle string) string {
 	body := `

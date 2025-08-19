@@ -64,6 +64,7 @@ func main() {
 			auth.POST("/cards/:id/use", handlers.UseCard)
 			auth.POST("/cards/:id/send", handlers.SendCard)
 			auth.POST("/cards/:id/delete", handlers.DeleteCard)
+			auth.GET("/cards/:id/copy", handlers.CopyCard)
 			// 用户相关
 			auth.GET("/profile", handlers.GetProfile)
 			auth.GET("/users/search", handlers.SearchUsers)

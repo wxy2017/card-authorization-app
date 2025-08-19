@@ -92,7 +92,7 @@ function displayCards(cards, containerId) {
     container.innerHTML = cards.map(card => `
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">${card.title}</h3>
+                <h3 class="card-title">${card.title} <span class="cardCopy" onclick="sendCopyRequest(${card.id},'${card.title}')">&nbsp;&nbsp;🍒</span></h3>
                 <span class="card-status status-${card.status}">${getStatusText(card.status)}</span>
             </div>
            <div style="display: flex; justify-content: space-between;">
@@ -110,6 +110,26 @@ function displayCards(cards, containerId) {
             ${getCardActions(card,containerId)}
         </div>
     `).join('');
+}
+
+function sendCopyRequest(cardId, cardTitle){
+    if(!confirm("确认复制\"" + cardTitle + "\"？")){
+        return
+    }
+    // 发送请求到后台
+    fetch(`/api/cards/${cardId}/copy`, { // 替换为实际后端接口地址
+        method: 'GET',
+        headers: getAuthHeaders(),
+    }).then(response => {
+            const data = response.json();
+            if (!response.ok) {
+                alert(data.error || '复制异常，请检查网络');
+            }else {
+                alert("复制成功🍒");
+                //转到我创建的
+                window.location.href = '/cards?tab=created';
+            }
+    });
 }
 
 // 计算剩余天数
@@ -193,7 +213,7 @@ function getCardActions(card,containerId) {
                 <button class="btn btn-primary" onclick="sendCard(${card.id})">发送</button>
             </div>
              <div style="margin-top: 0.1rem; display: flex; gap: 0.5rem;">
-                <button class="btn btn-primary" style="background-color: red; color: white;" onclick="deleteCard(${card.id})">删除</button>
+                <button class="btn btn-primary" style="background-color: red; color: white;" onclick="deleteCard(${card.id},'${containerId}')">删除</button>
             </div>
         `;
         }else {
