@@ -99,8 +99,17 @@ function displayCards(cards, containerId) {
         cardGroups[key].push(card);
     });
 
+    // 对每组卡片按过期时间升序排序（最近过期的在最上面）
+    Object.values(cardGroups).forEach(group => {
+        group.sort((a, b) => {
+            const aTime = a.expires_at ? new Date(a.expires_at).getTime() : Infinity;
+            const bTime = b.expires_at ? new Date(b.expires_at).getTime() : Infinity;
+            return aTime - bTime;
+        });
+    });
+
     container.innerHTML = Object.values(cardGroups).map(group => {
-        const card = group[0];
+        const card = group[0]; // 排序后第一个就是最近过期的
         const count = group.length;
         return `
         <div class="card">
