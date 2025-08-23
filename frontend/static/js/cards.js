@@ -89,18 +89,35 @@ function displayCards(cards, containerId) {
         return;
     }
 
-    container.innerHTML = cards.map(card => `
+    // 统计相同内容的卡片数量
+    const cardGroups = {};
+    cards.forEach(card => {
+        const key = `${card.title}|${card.description}|${card.creator.username}|${card.owner.username}`;
+        if (!cardGroups[key]) {
+            cardGroups[key] = [];
+        }
+        cardGroups[key].push(card);
+    });
+
+    container.innerHTML = Object.values(cardGroups).map(group => {
+        const card = group[0];
+        const count = group.length;
+        return `
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">${card.title} <span class="cardCopy" onclick="sendCopyRequest(${card.id},'${card.title}')">&nbsp;&nbsp;🍒</span></h3>
+                <h3 class="card-title">
+                    ${card.title}
+                    <span class="cardCopy" onclick="sendCopyRequest(${card.id},'${card.title}')">&nbsp;&nbsp;🍒</span>
+                    ${count > 1 ? `<span style="font-size: 14px;" class="gradient-text">x${count}</span>` : ''}
+                </h3>
                 <span class="card-status status-${card.status}">${getStatusText(card.status)}</span>
             </div>
-           <div style="display: flex; justify-content: space-between;">
-              <span class="card-description">${card.description}</span>
-              ${card.status === 'active' ? `
-                <span class="card-description">
-                    ${getRemainingTime(card.expires_at)}
-                </span>` : ''}
+            <div style="display: flex; justify-content: space-between;">
+                <span class="card-description">${card.description}</span>
+                ${card.status === 'active' ? `
+                    <span class="card-description">
+                        ${getRemainingTime(card.expires_at)}
+                    </span>` : ''}
             </div>
             <div class="card-meta">
                 <span>创建者：${card.creator.nickname || card.creator.username}</span>
@@ -109,7 +126,8 @@ function displayCards(cards, containerId) {
             </div>
             ${getCardActions(card,containerId)}
         </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 function sendCopyRequest(cardId, cardTitle){
