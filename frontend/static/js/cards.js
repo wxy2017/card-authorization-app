@@ -92,7 +92,7 @@ function displayCards(cards, containerId) {
     // 统计相同内容的卡片数量
     const cardGroups = {};
     cards.forEach(card => {
-        const key = `${card.title}|${card.description}|${card.creator.username}|${card.owner.username}`;
+        const key = `${card.title}|${card.description}|${card.creator.username}`;
         if (!cardGroups[key]) {
             cardGroups[key] = [];
         }
