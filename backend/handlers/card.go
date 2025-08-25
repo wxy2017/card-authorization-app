@@ -144,6 +144,7 @@ func UsedCard(c *gin.Context) {
 	if err := database.DB.Preload("Creator").Preload("Owner").
 		Where("creator_id=? or owner_id=?", userID, userID).
 		Where("status=?", "used").
+		Order("updated_at desc").
 		Find(&cards).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "卡片不存在"})
 		return
