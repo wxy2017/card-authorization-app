@@ -41,3 +41,9 @@ func CreateCardPage(c *gin.Context) {
 		"title": "创建卡片 - 功能卡片授权",
 	})
 }
+
+func Friends(c *gin.Context) {
+	c.HTML(http.StatusOK, "friends.html", gin.H{
+		"title": "我的道友 - 功能卡片授权",
+	})
+}

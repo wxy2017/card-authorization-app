@@ -18,6 +18,7 @@ func InitDB() error {
 	// 自动迁移表结构
 	err = DB.AutoMigrate(
 		&models.User{},
+		&models.Friends{},
 		&models.Card{},
 		&models.CardTransaction{},
 	)

@@ -16,6 +16,11 @@ type User struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
+type Friends struct {
+	ID        uint      `gorm:"primaryKey" json:"id"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
 // 创建用户前加密密码
 func (u *User) BeforeCreate(tx *gorm.DB) error {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)

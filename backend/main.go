@@ -43,6 +43,7 @@ func main() {
 	r.GET("/dashboard", handlers.Dashboard)
 	r.GET("/cards", handlers.CardsPage)
 	r.GET("/cards/create", handlers.CreateCardPage)
+	r.GET("/friends", handlers.Friends)
 
 	// API路由组
 	api := r.Group("/api")
@@ -70,7 +71,7 @@ func main() {
 			auth.GET("/users/search", handlers.SearchUsers)
 			auth.GET("/users/listUsers", handlers.ListUsers)
 			auth.POST("/user/:id/update", handlers.UpdateUser)
-			auth.GET("/users/lastActive", handlers.LastActive)
+			auth.GET("/friends", handlers.ListFriends)
 		}
 	}
 

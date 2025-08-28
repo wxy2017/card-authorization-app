@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.title}}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>我的道友</h1>
+            <div id="myFriendsInfo" style="position: relative;"></div>
+        </div>
+
+        <div class="header">
+            <h1>道友邀请</h1>
+            <div id="myFriendsInvite" style="position: relative;"></div>
+        </div>
+        
+        <div class="card">
+            <h2>查找道友</h2>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem;">
+                <input type="text" id="searchInput" class="form-control" placeholder="输入名称或是邮箱查找道友">
+                <button id="searchButton" class="btn btn-primary" onclick="searchUser()">查找</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 发送卡片模态框 -->
+    <div id="sendModal" class="modal">
+        <div class="modal-content">
+            <h2>发送卡片</h2>
+            <form id="sendForm">
+                <div class="form-group">
+                    <label class="form-label">接收人</label>
+                    <select class="form-control" id="toUsername" name="toUsername" required>
+                        <option value="" disabled selected>请选择用户</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">发送</button>
+                <button type="button" class="btn btn-outline" onclick="closeSendModal()">取消</button>
+            </form>
+        </div>
+    </div>
+
+    {{template "navbar.html" .}}
+    <script src="/static/js/auth.js"></script>
+    <script src="/static/js/friends.js"></script>
+</body>
+</html>

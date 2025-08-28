@@ -6,6 +6,7 @@ import (
 	"card-authorization/models"
 	"card-authorization/utils"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -242,12 +243,14 @@ func SearchUsers(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "搜索关键词至少2个字符"})
 		return
 	}
+	//去除query首尾空格
+	query = strings.TrimSpace(query)
 
 	var users []models.User
 	if err := database.DB.
-		Where("username LIKE ? OR nickname LIKE ?", "%"+query+"%", "%"+query+"%").
-		Select("id, username, nickname").
-		Limit(10).
+		Where("username LIKE ? OR nickname LIKE ? OR email = ?", "%"+query+"%", "%"+query+"%", query).
+		Select("id, username, nickname, email").
+		Limit(25).
 		Find(&users).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "搜索用户失败"})
 		return
