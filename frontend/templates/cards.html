@@ -17,18 +17,25 @@
             <h2>卡片分类</h2>
             <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
                 <button id="receivedCardsTab" class="btn btn-secondary" onclick="showTab('received')">收到的</button>
-                <button id="createdCardsTab" class="btn btn-primary" onclick="showTab('my')">我创建的</button>
+                <button id="sendCardsTab" class="btn btn-secondary" onclick="showTab('send')">发送的</button>
+                <button id="createdCardsTab" class="btn btn-primary" onclick="showTab('my')">我自己的</button>
                 <button id="usedCardsTab" class="btn btn-primary" onclick="showTab('used')">已使用的</button>
             </div>
         </div>
-        
-        <div id="myCards" class="cards-container" style="display: none;">
+
+        <div id="receivedCards" class="cards-container">
+            <div class="loading">
+                <div class="spinner"></div>
+            </div>
+        </div>
+
+        <div id="sendCards" class="cards-container" style="display: none;">
             <div class="loading">
                 <div class="spinner"></div>
             </div>
         </div>
         
-        <div id="receivedCards" class="cards-container">
+        <div id="myCards" class="cards-container" style="display: none;">
             <div class="loading">
                 <div class="spinner"></div>
             </div>

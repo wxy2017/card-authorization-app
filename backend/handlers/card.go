@@ -58,7 +58,7 @@ func GetMyCards(c *gin.Context) {
 
 	var cards []models.Card
 	if err := database.DB.Preload("Creator").Preload("Owner").
-		Where("creator_id = ?", userID).
+		Where("creator_id = ? and owner_id = ?", userID, userID).
 		Order("status,updated_at DESC").
 		Find(&cards).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "获取卡片失败"})
@@ -68,6 +68,20 @@ func GetMyCards(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"cards": cards})
 }
 
+func GetSendCards(c *gin.Context) {
+	userID := c.GetUint("userID")
+
+	var cards []models.Card
+	if err := database.DB.Preload("Creator").Preload("Owner").
+		Where("owner_id != ? AND creator_id = ?", userID, userID).
+		Order("status,updated_at DESC").
+		Find(&cards).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "获取卡片失败"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"cards": cards})
+}
 func GetReceivedCards(c *gin.Context) {
 	userID := c.GetUint("userID")
 
@@ -79,7 +93,6 @@ func GetReceivedCards(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "获取卡片失败"})
 		return
 	}
-
 	c.JSON(http.StatusOK, gin.H{"cards": cards})
 }
 

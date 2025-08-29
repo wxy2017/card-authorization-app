@@ -61,6 +61,7 @@ func main() {
 			auth.POST("/cards", handlers.CreateCard)
 			auth.GET("/cards", handlers.GetMyCards)
 			auth.GET("/cards/received", handlers.GetReceivedCards)
+			auth.GET("/cards/send", handlers.GetSendCards)
 			auth.POST("/cards/used", handlers.UsedCard)
 			auth.POST("/cards/:id/use", handlers.UseCard)
 			auth.POST("/cards/:id/send", handlers.SendCard)

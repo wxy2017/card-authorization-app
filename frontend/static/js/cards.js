@@ -6,6 +6,7 @@ let currentCardId = null;
 function showTab(tab) {
     document.getElementById('myCards').style.display = tab === 'my' ? 'block' : 'none';
     document.getElementById('receivedCards').style.display = tab === 'received' ? 'block' : 'none';
+    document.getElementById('sendCards').style.display = tab === 'send' ? 'block' : 'none';
     document.getElementById('usedCards').style.display = tab === 'used' ? 'block' : 'none';
 
     // 更新按钮样式
@@ -21,6 +22,8 @@ function showTab(tab) {
         loadMyCards();
     } else if (tab === 'received') {
         loadReceivedCards();
+    }else if (tab === 'send') {
+        loadSendCards();
     }else if (tab === 'used') {
         loadUsedCards();
     }
@@ -54,6 +57,24 @@ async function loadReceivedCards() {
         if (response.ok) {
             const data = await response.json();
             displayCards(data.cards, 'receivedCards');
+        } else if (response.status === 401) {
+            logout();
+        }
+    } catch (error) {
+        console.error('加载卡片失败:', error);
+    }
+}
+
+// 加载我发送的卡片
+async function loadSendCards() {
+    try {
+        const response = await fetch('/api/cards/send', {
+            headers: getAuthHeaders()
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            displayCards(data.cards, 'sendCards');
         } else if (response.status === 401) {
             logout();
         }
