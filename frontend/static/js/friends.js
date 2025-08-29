@@ -1,5 +1,3 @@
-// 认证相关JavaScript
-
 // 获取认证头
 function getAuthHeaders() {
     const token = localStorage.getItem('token');
@@ -68,6 +66,72 @@ async function loadMyFriends() {
 
 }
 
+// 加载我邀请的道友
+async function loadMyInviteFriends() {
+    const myInviteFriendsElement = document.getElementById('myInviteFriends');
+    try {
+        const response = await fetch('/api/users/friends/myInvite/list', {
+            headers: getAuthHeaders()
+        });
+        const friendElement = document.createElement('div');
+        const data = await response.json();
+        if (response.ok && data.users && data.users.length > 0) {
+            data.users.forEach(user => {
+                friendElement.classList.add('card');
+                //收到对方发的卡
+                friendElement.innerHTML = `
+                <h4 style="display: flex; align-items: center;">
+                    <span class="gradient-text">${user.nickname}</span>
+                    <span>📮<small>${user.email}</small></span>
+                </h4>
+                `;
+                myInviteFriendsElement.appendChild(friendElement);
+            });
+        } else {
+            // 暂时显示暂无活动
+            friendElement.textContent = '暂无邀请，赶快去邀请道友吧！';
+            myInviteFriendsElement.appendChild(friendElement);
+        }
+    } catch (error) {
+        console.error('加载用户信息失败:', error);
+    }
+
+
+}
+
+// 加载邀请我的道友
+async function loadInviteMyFriends() {
+    const myInviteFriendsElement = document.getElementById('inviteMyFriends');
+    try {
+        const response = await fetch('/api/users/friends/inviteMy/list', {
+            headers: getAuthHeaders()
+        });
+        const friendElement = document.createElement('div');
+        const data = await response.json();
+        if (response.ok && data.users && data.users.length > 0) {
+            data.users.forEach(user => {
+                friendElement.classList.add('card');
+                //收到对方发的卡
+                friendElement.innerHTML = `
+                <h4 style="display: flex; align-items: center;">
+                    <span class="gradient-text">${user.nickname}</span>
+                    <span>📮<small>${user.email}</small></span>
+                </h4>
+                `;
+                myInviteFriendsElement.appendChild(friendElement);
+            });
+        } else {
+            // 暂时显示暂无活动
+            friendElement.textContent = '暂无邀请';
+            myInviteFriendsElement.appendChild(friendElement);
+        }
+    } catch (error) {
+        console.error('加载用户信息失败:', error);
+    }
+
+
+}
+
 
 // 页面加载时检查认证
 document.addEventListener('DOMContentLoaded', () => {
@@ -84,5 +148,13 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = '/login';
     }
 
+    // 加载我的道友
     loadMyFriends()
+
+    // 加载邀请我的道友
+    loadInviteMyFriends()
+
+    // 加载我邀请的道友
+    loadMyInviteFriends()
+
 });

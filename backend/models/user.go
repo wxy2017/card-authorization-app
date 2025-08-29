@@ -1,9 +1,10 @@
 package models
 
 import (
+	"time"
+
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
-	"time"
 )
 
 type User struct {
@@ -25,9 +26,9 @@ type Friends struct {
 
 type FriendInvite struct {
 	ID         uint      `json:"id"`
-	FromUserID uint      `json:"from_user_id"`
-	ToUserID   uint      `json:"to_user_id"`
-	Status     string    `json:"status"` // pending（等待）, accepted（接收）, rejected（拒接）
+	FromUserID uint      `json:"from_user_id"` //发起邀请的人
+	ToUserID   uint      `json:"to_user_id"`   //收到邀请的人
+	Status     string    `json:"status"`       // pending（等待）, accepted（接收）, rejected（拒接）
 	CreatedAt  time.Time `json:"created_at"`
 	UpdatedAt  time.Time `json:"updated_at"`
 }

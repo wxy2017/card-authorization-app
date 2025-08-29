@@ -75,6 +75,8 @@ func main() {
 			auth.POST("/user/:id/update", handlers.UpdateUser)
 			auth.GET("/users/lastActive", handlers.LastActive)
 			auth.GET("/users/friends", handlers.ListFriends)
+			auth.GET("/users/friends/myInvite/list", handlers.ListMyInviteFriends)
+			auth.GET("/users/friends/inviteMy/list", handlers.ListInviteMyFriends)
 		}
 	}
 

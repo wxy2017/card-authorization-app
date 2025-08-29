@@ -2,6 +2,7 @@ package database
 
 import (
 	"card-authorization/models"
+
 	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 )
@@ -19,6 +20,7 @@ func InitDB() error {
 	err = DB.AutoMigrate(
 		&models.User{},
 		&models.Friends{},
+		&models.FriendInvite{},
 		&models.Card{},
 		&models.CardTransaction{},
 	)

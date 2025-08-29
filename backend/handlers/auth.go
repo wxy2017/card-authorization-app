@@ -215,57 +215,6 @@ func LastActive(c *gin.Context) {
 	})
 }
 
-// ListFriends 列出道友
-func ListFriendsOld(c *gin.Context) {
-
-	var friends []models.Friends
-	if err := database.DB.Table("friends").
-		Select("id, updated_at").
-		Order("updated_at desc").
-		Find(&friends).Error; err != nil {
-		log.Error("获取道友失败", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "获取道友失败"})
-		return
-	}
-	// 收集所有好友ID
-	friendIDS := make([]uint, 0, len(friends))
-	for _, f := range friends {
-		friendIDS = append(friendIDS, f.ID)
-	}
-
-	// 一次性查询所有好友信息
-	var users []models.User
-	if len(friendIDS) > 0 {
-		if err := database.DB.Where("id IN ?", friendIDS).Find(&users).Error; err != nil {
-			log.Error("获取好友信息失败", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "获取好友信息失败"})
-			return
-		}
-	}
-
-	// 创建一个映射以便快速查找用户信息
-	userMap := make(map[uint]models.User)
-	for _, user := range users {
-		userMap[user.ID] = user
-	}
-
-	type FriendResponse struct {
-		User      models.User `json:"user"`
-		UpdatedAt time.Time   `json:"updated_at"`
-	}
-	// 组装返回数据
-	var friendResponses []FriendResponse
-	for _, f := range friends {
-		if user, exists := userMap[f.ID]; exists {
-			friendResponses = append(friendResponses, FriendResponse{
-				User:      user,
-				UpdatedAt: f.UpdatedAt,
-			})
-		}
-	}
-	c.JSON(http.StatusOK, gin.H{"friends": friendResponses})
-}
-
 func Test(c *gin.Context) {
 	LastActive(c)
 }
