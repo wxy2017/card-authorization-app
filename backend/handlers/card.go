@@ -87,8 +87,8 @@ func GetReceivedCards(c *gin.Context) {
 
 	var cards []models.Card
 	if err := database.DB.Preload("Creator").Preload("Owner").
-		Where("owner_id = ? AND creator_id != ?", userID, userID).
-		Order("status,updated_at DESC").
+		Where("owner_id = ? AND creator_id != ? and status = ?", userID, userID, "active").
+		Order("updated_at DESC").
 		Find(&cards).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "获取卡片失败"})
 		return

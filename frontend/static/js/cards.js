@@ -113,7 +113,10 @@ function displayCards(cards, containerId) {
     // 统计相同内容的卡片数量
     const cardGroups = {};
     cards.forEach(card => {
-        const key = `${card.title}|${card.description}|${card.creator.username}`;
+        let key = `${card.title}|${card.description}|${card.creator.username}|${card.status}|${card.expires_at}`;
+        if( "used" === card.status){
+            key = `${card.title}|${card.description}|${card.creator.username}|${card.status}`;
+        }
         if (!cardGroups[key]) {
             cardGroups[key] = [];
         }
