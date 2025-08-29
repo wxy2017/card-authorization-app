@@ -39,7 +39,7 @@ async function loadMyFriends() {
     // 这里可以添加加载最近活动的逻辑
     const myFriendsInfoElement = document.getElementById('myFriendsInfo');
     try {
-        const response = await fetch('/api/friends', {
+        const response = await fetch('/api/users/friends', {
             headers: getAuthHeaders()
         });
         const friendElement = document.createElement('div');

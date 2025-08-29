@@ -7,10 +7,11 @@ import (
 	"card-authorization/log"
 	"card-authorization/middleware"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -72,7 +73,8 @@ func main() {
 			auth.GET("/users/search", handlers.SearchUsers)
 			auth.GET("/users/listUsers", handlers.ListUsers)
 			auth.POST("/user/:id/update", handlers.UpdateUser)
-			auth.GET("/friends", handlers.ListFriends)
+			auth.GET("/users/lastActive", handlers.LastActive)
+			auth.GET("/users/friends", handlers.ListFriends)
 		}
 	}
 

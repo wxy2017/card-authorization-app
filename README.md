@@ -90,10 +90,10 @@ go run main.go
 
 ### 好友相关
 - `GET /api/users/search` - 搜索用户
-- `GET /api/friends` - 获取好友列表
-- `GET /api/friends/:id/invite` - 邀请好友
-- `GET /api/friends/:id/invite/accept` - 同意好友邀请
-- `GET /api/friends/invite/list` - 邀请/被邀请列表
+- `GET /api/users/friends` - 获取好友列表
+- `GET /api/users/friends/:id/invite` - 邀请好友
+- `GET /api/users/friends/:id/invite/accept` - 同意好友邀请
+- `GET /api/users/friends/invite/list` - 邀请/被邀请列表
 
 ## 使用示例
 

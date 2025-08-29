@@ -4,17 +4,23 @@ import (
 	"card-authorization/database"
 	"card-authorization/log"
 	"card-authorization/models"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 // ListFriends 获取道友列表，按最近互动时间排序
 func ListFriends(c *gin.Context) {
-
+	userID := c.GetUint("userID")
 	var users []models.User
+	subQuery := database.DB.Table("friends").
+		Select("friend_id").
+		Where("user_id = ?", userID).
+		Order("updated_at desc")
+
 	if err := database.DB.Table("users").
-		Joins("inner joins friends on friends.user_id = users.id").
-		Order("friends.updated_at desc").
+		Select("username, nickname, email").
+		Where("id IN (?)", subQuery).
 		Find(&users).Error; err != nil {
 		log.Error("获取道友失败", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "获取道友失败"})

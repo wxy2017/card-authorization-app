@@ -168,12 +168,6 @@ func UpdateUser(c *gin.Context) {
 // LastActive 我最近的活动
 func LastActive(c *gin.Context) {
 	userID := c.GetUint("userID")
-	userID = 1
-	//最新发送给我的卡
-	//最近我我创建的卡
-	//最近我使用的卡
-	//最近我发送给别人的卡
-
 	var cards []models.Card
 	if err := database.DB.Table("cards").
 		Preload("Creator").
