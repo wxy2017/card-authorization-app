@@ -8,6 +8,7 @@
 - **发送卡片**：将卡片发送给其他用户
 - **使用卡片**：收到卡片后可以使用，触发相应任务
 - **卡片管理**：查看和管理所有创建和收到的卡片
+- **好友邀请**：通过用户名搜索并添加好友
 - **移动端优化**：响应式设计，完美适配手机使用
 
 ## 技术栈
@@ -86,7 +87,13 @@ go run main.go
 - `GET /api/cards/received` - 获取收到的卡片
 - `POST /api/cards/:id/use` - 使用卡片
 - `POST /api/cards/:id/send` - 发送卡片
+
+### 好友相关
 - `GET /api/users/search` - 搜索用户
+- `GET /api/friends` - 获取好友列表
+- `GET /api/friends/:id/invite` - 邀请好友
+- `GET /api/friends/:id/invite/accept` - 同意好友邀请
+- `GET /api/friends/invite/list` - 邀请/被邀请列表
 
 ## 使用示例
 

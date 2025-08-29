@@ -17,8 +17,19 @@ type User struct {
 }
 
 type Friends struct {
-	ID        uint      `gorm:"primaryKey" json:"id"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID        uint      `json:"id"`
+	UserID    uint      `json:"user_id"`
+	FriendID  uint      `json:"friend_id"`
+	UpdatedAt time.Time `json:"created_at"`
+}
+
+type FriendInvite struct {
+	ID         uint      `json:"id"`
+	FromUserID uint      `json:"from_user_id"`
+	ToUserID   uint      `json:"to_user_id"`
+	Status     string    `json:"status"` // pending（等待）, accepted（接收）, rejected（拒接）
+	CreatedAt  time.Time `json:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at"`
 }
 
 // 创建用户前加密密码

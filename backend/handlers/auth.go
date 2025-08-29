@@ -222,7 +222,7 @@ func LastActive(c *gin.Context) {
 }
 
 // ListFriends 列出道友
-func ListFriends(c *gin.Context) {
+func ListFriendsOld(c *gin.Context) {
 
 	var friends []models.Friends
 	if err := database.DB.Table("friends").

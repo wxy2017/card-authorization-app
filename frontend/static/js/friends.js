@@ -44,14 +44,14 @@ async function loadMyFriends() {
         });
         const friendElement = document.createElement('div');
         const data = await response.json();
-        if (response.ok && data.friends && data.friends.length > 0) {
-            data.friends.forEach(friend => {
+        if (response.ok && data.users && data.users.length > 0) {
+            data.users.forEach(user => {
                 friendElement.classList.add('card');
                 //收到对方发的卡
                 friendElement.innerHTML = `
                 <h4 style="display: flex; align-items: center;">
-                    <span class="gradient-text">${friend.user.nickname}</span>
-                    <span>📮<small>${friend.user.email}</small></span>
+                    <span class="gradient-text">${user.nickname}</span>
+                    <span>📮<small>${user.email}</small></span>
                 </h4>
                 `;
                 myFriendsInfoElement.appendChild(friendElement);
