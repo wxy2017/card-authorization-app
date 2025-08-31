@@ -33,7 +33,7 @@ function searchUser() {
 function getFriendStatusText(status) {
     switch (status) {
         case 'pending':
-            return '待处理';
+            return '已邀请';
         case 'accepted':
             return '已接受';
         case 'rejected':
@@ -44,13 +44,19 @@ function getFriendStatusText(status) {
 }
 
 // 获取好友的操作按钮·
-function getFriendActions(user) {
-
+function getFriendActions(item) {
     // 如果好友的邀请状态为空，则可以显示邀请按钮·
-    if (!user.status) {
+    if (item && item.invited === 'default') {
         return `
             <div class="card-actions">
-                <button class="btn btn-primary" onclick="sendFriendRequest(${user.id})">邀请</button>
+                <button class="btn btn-primary" onclick="sendFriendRequest(${item.user.id})">邀请</button>
+            </div>
+        `;
+    }else{
+        //邀请按钮不可点击
+        return `
+            <div class="card-actions">
+                <button class="btn btn-secondary" disabled>已邀请</button>
             </div>
         `;
     }
@@ -74,7 +80,7 @@ function displayFriends(list) {
             </h3>
             <span class="card-status status-${item.invited}">${getFriendStatusText(item.invited)}</span>
         </div>
-        ${getFriendActions(item.user)}
+        ${getFriendActions(item)}
     </div>
     `).join('');    
 }

@@ -160,6 +160,21 @@ body {
     color: var(--primary-color);
 }
 
+/* 通用禁用按钮状态（置灰） */
+.btn:disabled, .btn[disabled] {
+    opacity: 0.55;
+    cursor: not-allowed;
+    box-shadow: none;
+    filter: grayscale(15%);
+    transition: none;
+}
+
+/* 次要按钮禁用时采用更浅的灰背景与文字颜色 */
+.btn-secondary:disabled, .btn-secondary[disabled] {
+    background: #cbd5e1; /* slate-300 */
+    color: #64748b; /* slate-500 */
+}
+
 /* 表单样式 */
 .form-group {
     margin-bottom: 1.5rem;
@@ -216,42 +231,95 @@ body {
 
 /* 模态框 */
 .modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
+    /* 基础遮罩层 */
+    display: none; /* 通过 JS 切换为 flex 显示 */
+    position: sticky;
+    inset: 0; /* 等价于 top/left/right/bottom 0 */
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.45);
     z-index: 1000;
+    /* 使用 flex 让内容在移动端底部对齐，更贴近原生抽屉体验 */
+    align-items: flex-end;
+    justify-content: center;
+    /* 防止背景滚动穿透 */
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
 .modal-content {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: white;
+    position: relative;
+    width: 100%;
+    background: #fff;
     border-radius: 20px 20px 0 0;
-    padding: 2rem;
+    padding: 1.75rem 1.5rem 1.25rem;
     max-height: 80vh;
     overflow-y: auto;
+    box-shadow: 0 -4px 24px rgba(0,0,0,0.15);
+    /* 进入动画 */
+    animation: modal-slide-up .28s cubic-bezier(.4,.0,.2,1);
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: calc(1.25rem + env(safe-area-inset-bottom));
 }
 
 /* 模态框关闭按钮 */
 .modal-close {
     position: absolute;
-    top: 10px;
-    right: 16px;
-    background: transparent;
+    top: 6px;
+    right: 8px;
+    width: 44px; /* 提高可点击面积 (Apple HIG 最小44px) */
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.04);
     border: none;
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     line-height: 1;
     cursor: pointer;
-    color: #666;
+    color: #555;
+    border-radius: 50%;
+    -webkit-tap-highlight-color: transparent;
+    transition: background .18s ease, color .18s ease;
 }
 .modal-close:hover {
-    color: #000;
+    background: rgba(0,0,0,0.07);
+    color: #222;
+}
+
+/* 触摸按下反馈 */
+.modal-close:active {
+    background: rgba(0,0,0,0.12);
+    transform: scale(.94);
+}
+
+/* 中等及大屏幕：居中浮层样式 */
+@media (min-width: 640px) {
+    .modal {
+        align-items: center; /* 居中 */
+        padding: 2rem;
+    }
+    .modal-content {
+        border-radius: 20px;
+        max-width: 520px;
+        animation: modal-zoom-in .28s cubic-bezier(.4,.0,.2,1);
+    }
+    .modal-close {
+        top: 4px;
+        right: 4px;
+        background: transparent;
+    }
+}
+
+@keyframes modal-slide-up {
+    0% { transform: translateY(16px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes modal-zoom-in {
+    0% { transform: scale(.96); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
 }
 
 /* 加载动画 */
@@ -357,6 +425,7 @@ body {
 .status-default {
     background: var(--success-color);
     color: white;
+}
 
 
 .status-pending {

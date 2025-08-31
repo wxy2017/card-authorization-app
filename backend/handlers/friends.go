@@ -72,6 +72,7 @@ func ListInviteMyFriends(c *gin.Context) {
 
 // SearchFriendUsers 搜索用户，并关联好友关系
 func SearchFriendUsers(c *gin.Context) {
+	userID := c.GetUint("userID")
 	query := c.Query("q")
 	if len(query) < 2 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "搜索关键词至少2个字符"})
@@ -98,7 +99,7 @@ func SearchFriendUsers(c *gin.Context) {
 	}
 	if len(userIDs) > 0 { // 只有在有用户时才查询，避免 IN () 语法问题
 		if err := database.DB.
-			Where("from_user_id IN ?", userIDs).
+			Where("from_user_id = ? AND to_user_id IN ?", userID, userIDs).
 			Find(&friendInvites).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "获取好友邀请关系失败"})
 			return
@@ -109,7 +110,7 @@ func SearchFriendUsers(c *gin.Context) {
 	for _, user := range users {
 		invited := "default"
 		for _, invite := range friendInvites {
-			if invite.FromUserID == user.ID {
+			if invite.ToUserID == user.ID {
 				// 如果invite.Status为空，给个默认值：default
 				if invite.Status != "" {
 					invited = invite.Status
