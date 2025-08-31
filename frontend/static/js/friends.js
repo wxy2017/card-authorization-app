@@ -14,22 +14,75 @@ function searchUser() {
         alert('请输入用户名或邮箱');
         return;
     }
-    fetch(`/api/users/search?q=${encodeURIComponent(inputValue)}`, {
+    fetch(`/api/users/friends/search?q=${encodeURIComponent(inputValue)}`, {
         headers: getAuthHeaders()
     })
     .then(response => response.json())
     .then(data => {
-        if(data.users && data.users.length > 0){
-            for (let user of data.users) {
-              alert(`找到用户: ${user.nickname} (${user.email})`);
-            }
-
+        if(data.list && data.list.length > 0){
+            displayFriends(data.list);
         }
     })
     .catch(error => {
         console.error('搜索用户失败:', error);
     });
 
+}
+
+// 获取好友的邀请状态（）
+function getFriendStatusText(status) {
+    switch (status) {
+        case 'pending':
+            return '待处理';
+        case 'accepted':
+            return '已接受';
+        case 'rejected':
+            return '已拒绝';
+        default:
+            return '可邀请';
+    }
+}
+
+// 获取好友的操作按钮·
+function getFriendActions(user) {
+
+    // 如果好友的邀请状态为空，则可以显示邀请按钮·
+    if (!user.status) {
+        return `
+            <div class="card-actions">
+                <button class="btn btn-primary" onclick="sendFriendRequest(${user.id})">邀请</button>
+            </div>
+        `;
+    }
+}
+
+// 显示查询结果
+function displayFriends(list) {
+    const containerModel = document.getElementById('friendsModal');
+     const container = document.getElementById('friendsSearchResults');
+
+    if (list.length === 0) {
+        container.innerHTML = '<div class="card"><p class="text-muted">暂无道友</p></div>';
+        return;
+    }
+    containerModel.style.display = 'block';
+    container.innerHTML = list.map(item => `
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                ${item.user.nickname || item.user.username} 📮 <small>${item.user.email}</small>
+            </h3>
+            <span class="card-status status-${item.invited}">${getFriendStatusText(item.invited)}</span>
+        </div>
+        ${getFriendActions(item.user)}
+    </div>
+    `).join('');    
+}
+
+// 关闭模态框
+function closeFriendsModal() {
+    const m = document.getElementById('friendsModal');
+    if (m) m.style.display = 'none';
 }
 
 // 加载我的道友

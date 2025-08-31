@@ -238,6 +238,22 @@ body {
     overflow-y: auto;
 }
 
+/* 模态框关闭按钮 */
+.modal-close {
+    position: absolute;
+    top: 10px;
+    right: 16px;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    color: #666;
+}
+.modal-close:hover {
+    color: #000;
+}
+
 /* 加载动画 */
 .loading {
     display: flex;
@@ -331,6 +347,29 @@ body {
 .save-btn:hover {
     background-color: #3367d6;
 }
+
+
+.status-accepted {
+    background: var(--success-color);
+    color: white;
+}
+
+.status-default {
+    background: var(--success-color);
+    color: white;
+
+
+.status-pending {
+    background: var(--text-muted);
+    color: white;
+}
+
+.status-rejected {
+    background: var(--danger-color);
+    color: white;
+}
+
+
 
 #newEmail:focus {
     outline: none;

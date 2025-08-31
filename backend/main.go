@@ -70,11 +70,11 @@ func main() {
 			auth.GET("/cards/:id/copy", handlers.CopyCard)
 			// 用户相关
 			auth.GET("/profile", handlers.GetProfile)
-			auth.GET("/users/search", handlers.SearchUsers)
 			auth.GET("/users/listUsers", handlers.ListUsers)
 			auth.POST("/user/:id/update", handlers.UpdateUser)
 			auth.GET("/users/lastActive", handlers.LastActive)
 			auth.GET("/users/friends", handlers.ListFriends)
+			auth.GET("/users/friends/search", handlers.SearchFriendUsers)
 			auth.GET("/users/friends/myInvite/list", handlers.ListMyInviteFriends)
 			auth.GET("/users/friends/inviteMy/list", handlers.ListInviteMyFriends)
 		}

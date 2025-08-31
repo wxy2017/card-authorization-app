@@ -14,17 +14,17 @@
         </div>
 
         <div class="header">
-            <h1>邀请道友</h1>
+            <h3>邀请道友</h3>
             <div id="myInviteFriends" style="position: relative;"></div>
         </div>
 
          <div class="header">
-            <h1>道友邀请</h1>
+            <h3>道友邀请</h3>
             <div id="inviteMyFriends" style="position: relative;"></div>
         </div>
         
         <div class="card">
-            <h2>查找道友</h2>
+            <h3>查找道友</h3>
             <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem;">
                 <input type="text" id="searchInput" class="form-control" placeholder="输入名称或是邮箱查找道友">
                 <button id="searchButton" class="btn btn-primary" onclick="searchUser()">查找</button>
@@ -32,20 +32,12 @@
         </div>
     </div>
 
-    <!-- 发送卡片模态框 -->
-    <div id="sendModal" class="modal">
-        <div class="modal-content">
-            <h2>发送卡片</h2>
-            <form id="sendForm">
-                <div class="form-group">
-                    <label class="form-label">接收人</label>
-                    <select class="form-control" id="toUsername" name="toUsername" required>
-                        <option value="" disabled selected>请选择用户</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-primary">发送</button>
-                <button type="button" class="btn btn-outline" onclick="closeSendModal()">取消</button>
-            </form>
+    <!-- 查询用户模态框 -->
+    <div id="friendsModal" class="modal">
+        <div class="modal-content ">
+            <button type="button" class="modal-close" onclick="closeFriendsModal()" aria-label="关闭">×</button>
+            <h2 class="gradient-text">查询结果</h2>
+            <div id="friendsSearchResults" style="overflow-y: auto;"></div>
         </div>
     </div>
 
