@@ -5,7 +5,7 @@ REM 1. 打包后端
 cd backend
 set GOOS=linux
 set GOARCH=amd64
-REM go build -o card-authorization-app
+go build -o card-authorization-app
 cd ..
 
 
