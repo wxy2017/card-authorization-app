@@ -182,6 +182,7 @@ async function loadMyFriends() {
                 <h4 style="display: flex; align-items: center;">
                     <span class="gradient-text">${user.nickname}</span>
                     <span>📮<small>${user.email}</small></span>
+                    <span class="card-status status-rejected" style="margin-left: auto;">${deleteFriendText(user.id)}</span>
                 </h4>
                 `;
                 myFriendsInfoElement.appendChild(friendElement);
@@ -194,9 +195,39 @@ async function loadMyFriends() {
     } catch (error) {
         console.error('加载用户信息失败:', error);
     }
-
-
 }
+
+// 删除道友入库
+function deleteFriendText(userId){
+    return `<div onclick="deleteFriend(${userId})">删除</div>`;
+}
+
+//发送删除道友请求
+function deleteFriend(userId){
+    //确认删除道友
+    if(!confirm('确认删除道友？')){
+        return
+    }
+    //调用接口删除
+    fetch(`/api/users/friends/${userId}/delete`, {
+        method: 'GET',
+        headers: getAuthHeaders(),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            // 重新加载道友页面
+            window.location.href = '/friends';
+        } else {
+            alert('操作失败: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('操作失败:', error);
+    });
+}
+
 
 // 加载我邀请的道友
 async function loadMyInviteFriends() {

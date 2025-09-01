@@ -223,8 +223,8 @@ func SearchFriendUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"list": results})
 }
 
-// InviteFriends 邀请好友
-func InviteFriends(c *gin.Context) {
+// InviteFriend 邀请好友
+func InviteFriend(c *gin.Context) {
 	//从URL中获取被邀请的用户ID
 	inviteeID := c.Param("id")
 	if inviteeID == "" {
@@ -283,8 +283,8 @@ func InviteFriends(c *gin.Context) {
 	}
 }
 
-// AcceptFriends 接受好友邀请
-func AcceptFriends(c *gin.Context) {
+// AcceptFriend 接受好友邀请
+func AcceptFriend(c *gin.Context) {
 	//从URL中获取邀请的用户ID
 	inviterID := c.Param("id")
 	if inviterID == "" {
@@ -358,6 +358,54 @@ func AcceptFriends(c *gin.Context) {
 		//返回成功响应
 		c.JSON(http.StatusOK, gin.H{"success": true, "message": "好友邀请已接受"})
 	}
+}
+
+// DeleteFriend 删除好友
+func DeleteFriend(c *gin.Context) {
+	//从URL中获取邀请的用户ID
+	deleteUserID := c.Param("id")
+	if deleteUserID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "删除用户ID不能为空"})
+		return
+	}
+	// 查询待删除好友是否存在
+	var deleteUser models.User
+	if err := database.DB.First(&deleteUser, deleteUserID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "删除用户不存在"})
+		return
+	}
+	//获取当前用户ID
+	userID := c.GetUint("userID")
+	if userID == deleteUser.ID {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "不能删除自己"})
+		return
+	}
+	//检查是否已经是好友关系
+	var existingFriend models.Friends
+	if err := database.DB.Where("user_id = ? AND friend_id = ?", userID, deleteUser.ID).First(&existingFriend).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "你们不是好友关系"})
+		return
+	}
+	//删除双向好友关系记录
+	if err := database.DB.Where("user_id = ? AND friend_id = ?", userID, deleteUser.ID).Delete(&models.Friends{}).Error; err != nil {
+		log.Error("删除好友关系失败", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "删除好友关系失败"})
+		return
+	}
+	if err := database.DB.Where("user_id = ? AND friend_id = ?", deleteUser.ID, userID).Delete(&models.Friends{}).Error; err != nil {
+		log.Error("删除好友关系失败", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "删除好友关系失败"})
+		return
+	}
+	//删除邀请记录
+	if err := database.DB.Where("(from_user_id = ? AND to_user_id = ?) OR (from_user_id = ? AND to_user_id = ?)", userID, deleteUser.ID, deleteUser.ID, userID).Delete(&models.FriendInvite{}).Error; err != nil {
+		log.Error("删除好友邀请记录失败", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "删除好友邀请记录失败"})
+		return
+	}
+	//返回成功响应
+	c.JSON(http.StatusOK, gin.H{"success": true, "message": "好友已删除"})
+
 }
 
 // 生成美化的邮件内容（请求好友）
