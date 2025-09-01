@@ -365,7 +365,7 @@ async function loadUserList() {
             data.users.forEach(user => {
                 const option = document.createElement('option');
                 option.value = user.username;
-                option.textContent = user.nickname;
+                option.textContent = user.nickname + ' (' + user.email + ')';
                 select.appendChild(option);
             });
         } else if (response.status === 401) {

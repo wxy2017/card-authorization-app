@@ -72,6 +72,10 @@ function  getMyInviteStatusText(status){
 
 // 接受好友邀请
 function acceptInvite(userId){
+    //确认接受邀请
+    if(!confirm('确认接受道友邀请？')){
+        return;
+    }
     fetch(`/api/users/friends/${userId}/accept`, {
         method: 'GET',
         headers: getAuthHeaders(),
