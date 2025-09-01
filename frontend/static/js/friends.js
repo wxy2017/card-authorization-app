@@ -29,7 +29,7 @@ function searchUser() {
 
 }
 
-// 获取好友的邀请状态（）
+// 获取好友的邀请状态
 function getFriendStatusText(status) {
     switch (status) {
         case 'pending':
@@ -41,6 +41,75 @@ function getFriendStatusText(status) {
         default:
             return '可邀请';
     }
+}
+
+// 获取好友的邀请状态
+function getInviteMyStatusText(status,userId) {
+    switch (status) {
+        case 'pending':
+            return `<div onclick="acceptInvite(${userId})">待接受</div>`;
+        case 'accepted':
+            return '已接受';
+        case 'rejected':
+            return '已拒绝';
+        default:
+            return '';
+    }
+}
+
+function  getMyInviteStatusText(status){
+    switch (status) {
+        case 'pending':
+            return '待接受';
+        case 'accepted':
+            return '已接受';
+        case 'rejected':
+            return '已拒绝';
+        default:
+            return '';
+    }
+}
+
+// 接受好友邀请
+function acceptInvite(userId){
+    fetch(`/api/users/friends/${userId}/accept`, {
+        method: 'GET',
+        headers: getAuthHeaders(),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            // 重新加载道友页面
+            window.location.href = '/friends';
+        } else {
+            alert('操作失败: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('操作失败:', error);
+    });
+}
+
+// 发送好友邀请
+function sendFriendRequest(userId) {
+    fetch(`/api/users/friends/${userId}/invite`, {
+        method: 'GET',
+        headers: getAuthHeaders(),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            // 重新加载道友页面
+            window.location.href = '/friends';
+        } else {
+            alert('邀请失败: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('发送邀请失败:', error);
+    });
 }
 
 // 获取好友的操作按钮·
@@ -132,23 +201,24 @@ async function loadMyInviteFriends() {
         const response = await fetch('/api/users/friends/myInvite/list', {
             headers: getAuthHeaders()
         });
-        const friendElement = document.createElement('div');
         const data = await response.json();
-        if (response.ok && data.users && data.users.length > 0) {
-            data.users.forEach(user => {
+        if (response.ok && data.list && data.list.length > 0) {
+            data.list.forEach(item => {
+                let friendElement = document.createElement('div');
                 friendElement.classList.add('card');
-                //收到对方发的卡
                 friendElement.innerHTML = `
-                <h4 style="display: flex; align-items: center;">
-                    <span class="gradient-text">${user.nickname}</span>
-                    <span>📮<small>${user.email}</small></span>
+                <h4 class="friend-title"> >
+                    <span class="gradient-text">${item.user.nickname}</span>
+                    <span>📮<small>${item.user.email}</small></span>
+                    <span class="card-status status-${item.invited}" style="margin-left: auto;">${getMyInviteStatusText(item.invited)}</span>
                 </h4>
                 `;
                 myInviteFriendsElement.appendChild(friendElement);
             });
         } else {
             // 暂时显示暂无活动
-            friendElement.textContent = '暂无邀请，赶快去邀请道友吧！';
+            let friendElement = document.createElement('div');
+            friendElement.textContent = '暂未邀请，快去邀请道友吧~';
             myInviteFriendsElement.appendChild(friendElement);
         }
     } catch (error) {
@@ -165,22 +235,23 @@ async function loadInviteMyFriends() {
         const response = await fetch('/api/users/friends/inviteMy/list', {
             headers: getAuthHeaders()
         });
-        const friendElement = document.createElement('div');
         const data = await response.json();
-        if (response.ok && data.users && data.users.length > 0) {
-            data.users.forEach(user => {
+        if (response.ok && data.list && data.list.length > 0) {
+            data.list.forEach(item => {
+                let friendElement = document.createElement('div');
                 friendElement.classList.add('card');
-                //收到对方发的卡
                 friendElement.innerHTML = `
-                <h4 style="display: flex; align-items: center;">
-                    <span class="gradient-text">${user.nickname}</span>
-                    <span>📮<small>${user.email}</small></span>
+                <h4 class="friend-title"> >
+                    <span class="gradient-text">${item.user.nickname}</span>
+                    <span>📮<small>${item.user.email}</small></span>
+                    <span class="card-status status-inviteMy-${item.invited}" style="margin-left: auto;">${getInviteMyStatusText(item.invited,item.user.id)}</span>
                 </h4>
                 `;
                 myInviteFriendsElement.appendChild(friendElement);
             });
         } else {
             // 暂时显示暂无活动
+            let friendElement = document.createElement('div');
             friendElement.textContent = '暂无邀请';
             myInviteFriendsElement.appendChild(friendElement);
         }
@@ -190,7 +261,6 @@ async function loadInviteMyFriends() {
 
 
 }
-
 
 // 页面加载时检查认证
 document.addEventListener('DOMContentLoaded', () => {

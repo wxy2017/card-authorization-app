@@ -355,7 +355,7 @@ function formatDate(dateString) {
 // 下拉选项（用户）
 async function loadUserList() {
     try {
-        const response = await fetch('/api/users/listUsers', {
+        const response = await fetch('/api/users/friends/list', {
             headers: getAuthHeaders()
         });
         if (response.ok) {

@@ -77,6 +77,13 @@ body {
     color: var(--dark-color);
 }
 
+.friend-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--dark-color);
+    display: flex;
+}
+
 .card-status {
     padding: 0.25rem 0.75rem;
     border-radius: 20px;
@@ -434,6 +441,21 @@ body {
 }
 
 .status-rejected {
+    background: var(--danger-color);
+    color: white;
+}
+
+.status-inviteMy-pending {
+    background: var(--success-color);
+    color: white;
+}
+
+.status-inviteMy-accepted {
+    background: var(--text-muted);
+    color: white;
+}
+
+.status-inviteMy-rejected {
     background: var(--danger-color);
     color: white;
 }

@@ -75,8 +75,11 @@ func main() {
 			auth.GET("/users/lastActive", handlers.LastActive)
 			auth.GET("/users/friends", handlers.ListFriends)
 			auth.GET("/users/friends/search", handlers.SearchFriendUsers)
+			auth.GET("/users/friends/list", handlers.ListFriendUsers)
 			auth.GET("/users/friends/myInvite/list", handlers.ListMyInviteFriends)
 			auth.GET("/users/friends/inviteMy/list", handlers.ListInviteMyFriends)
+			auth.GET("/users/friends/:id/invite", handlers.InviteFriends)
+			auth.GET("/users/friends/:id/accept", handlers.AcceptFriends)
 		}
 	}
 
